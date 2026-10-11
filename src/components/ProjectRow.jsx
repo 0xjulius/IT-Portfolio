@@ -35,7 +35,7 @@ export default function ProjectRow({
 
           {/* Tägit */}
           <div className="flex flex-wrap gap-1.5 mt-2">
-            {tags &&
+            {(tags && tags.slice(0, 3).label) ||
               tags.slice(0, 3).map((tag, i) => (
                 <span
                   key={i}
@@ -53,15 +53,15 @@ export default function ProjectRow({
         </div>
       </div>
 
-      {/* Painikkeet */}
-      <div className="flex flex-wrap items-center gap-2 pt-1">
+      {/* Painikkeet: flex-nowrap pitää napit samalla rivillä ja text-xs / sopivat paddingit estävät tekstin katkeamisen */}
+      <div className="flex items-center gap-2 pt-1">
         {hasArticle && (
           <Link
-            to={`/projects/${slug}`} // <-- KORJATTU: Käyttää nyt samaa /projects/ polkua kuin ProjectCard!
-            className="flex-1 min-w-[95px] flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-bold text-slate-800 bg-slate-200 hover:bg-slate-300 border border-slate-300 rounded-xl transition-all shadow-sm"
+            to={`/projects/${slug}`}
+            className="flex-1 flex items-center justify-center gap-1 px-2 py-2.5 text-xs font-bold text-white bg-purple-700 hover:bg-purple-600 rounded-xl transition-all shadow-sm truncate"
           >
-            <FaBookOpen className="text-xs" />
-            <span>Case Study</span>
+            <FaBookOpen className="text-[10px] flex-shrink-0" />
+            <span className="truncate">Case Study</span>
           </Link>
         )}
         {github && (
@@ -69,10 +69,10 @@ export default function ProjectRow({
             href={github}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-bold text-gray-100 bg-slate-800 hover:bg-slate-900 rounded-xl transition-all shadow-sm"
+            className="flex-1 flex items-center justify-center gap-1 px-2 py-2.5 text-xs font-bold text-gray-100 bg-slate-800 hover:bg-slate-900 rounded-xl transition-all shadow-sm truncate"
           >
-            <FaGithub className="text-base" />
-            <span>Code</span>
+            <FaGithub className="text-sm flex-shrink-0" />
+            <span className="truncate">Code</span>
           </a>
         )}
         {live && (
@@ -80,10 +80,10 @@ export default function ProjectRow({
             href={live}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 min-w-[85px] flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-bold text-white bg-sky-600 hover:bg-sky-500 rounded-xl transition-all shadow-sm"
+            className="flex-1 flex items-center justify-center gap-1 px-2 py-2.5 text-xs font-bold text-white bg-sky-600 hover:bg-sky-500 rounded-xl transition-all shadow-sm truncate"
           >
-            <span>Demo</span>
-            <FaExternalLinkAlt className="text-xs" />
+            <span className="truncate">Demo</span>
+            <FaExternalLinkAlt className="text-[10px] flex-shrink-0" />
           </a>
         )}
       </div>

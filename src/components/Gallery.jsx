@@ -1,5 +1,9 @@
-import React from "react";
-import { faCamera, faPalette } from "@fortawesome/free-solid-svg-icons";
+import React, { useState, useEffect } from "react";
+import {
+  faCamera,
+  faPalette,
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -16,7 +20,7 @@ const galleryContent = {
       " avulla tekee tuotteista paitsi kauniita, myös intuitiivisia käyttää.",
     visualLink: "Katso työnäytteet",
 
-    photoTitle: "Valokuvaus & Visuaalinen Tarinankerronta",
+    photoTitle: "Valokuvaus",
     photoDesc1: "Yli 10 vuoden kokemus ",
     photoSpan1: "valokuvauksesta",
     photoDesc2:
@@ -55,28 +59,71 @@ const Gallery = () => {
   const { lang } = useLanguage();
   const t = galleryContent[lang] || galleryContent.fi;
 
+  // Tarkistetaan heti alussa onko kyseessä työpöytänäyttö (esim. leveämpi kuin 1024px)
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : true,
+  );
+
+  // Asetetaan tila: työpöydällä oletuksena auki (true), mobiilissa kiinni (false)
+  const [visualExpanded, setVisualExpanded] = useState(isDesktop);
+  const [photoExpanded, setPhotoExpanded] = useState(isDesktop);
+
+  // Päivitetään tilaa tarvittaessa jos ikkunaa muutetaan
+  useEffect(() => {
+    const handleResize = () => {
+      const desktop = window.innerWidth >= 1024;
+      setIsDesktop(desktop);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <section className="Gallery flex justify-center mb-60">
       <div className="mx-auto text-center pt-5 px-5 max-w-[800px] lg:max-w-[1200px]">
         <div className="flex flex-wrap justify-center gap-10">
           {/* Visual Design Card */}
           <div className="w-full lg:w-[calc(50%-20px)] flex items-stretch">
-            <div className="mx-auto text-xl ctext font-semibold card px-10 p-10 flex flex-col justify-between">
+            <div className="mx-auto text-xl ctext font-semibold card px-10 p-10 flex flex-col justify-between w-full">
               <div>
-                <h2 className="ptx font-semibold mb-6 text-2xl flex items-center justify-center gap-3">
-                  <FontAwesomeIcon icon={faPalette} />
-                  {t.visualTitle}
-                </h2>
-                <p>
-                  {t.visualDesc1}
-                  <span className="ptx2 font-semibold">{t.visualSpan1}</span>
-                  {t.visualDesc2}
-                  <span className="ptx2 font-semibold">{t.visualSpan2}</span>
-                  {t.visualDesc3}
-                  <span className="ptx2 font-semibold">{t.visualSpan3}</span>
-                  {t.visualDesc4}
-                </p>
+                <button
+                  onClick={() => setVisualExpanded(!visualExpanded)}
+                  className="w-full font-semibold mb-4 text-2xl flex items-center justify-between gap-3 ptx focus:outline-none group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3 text-left ">
+                    <FontAwesomeIcon
+                      icon={faPalette}
+                      className="flex-shrink-0"
+                    />
+                    <span>{t.visualTitle}</span>
+                  </div>
+                  <FontAwesomeIcon
+                    icon={faChevronDown}
+                    className={`text-lg text-black/50 transition-transform duration-300 flex-shrink-0 ${
+                      visualExpanded ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className={`transition-all duration-300 overflow-hidden ${
+                    visualExpanded
+                      ? "max-h-[500px] opacity-100 mt-4"
+                      : "max-h-0 opacity-0 mt-0"
+                  }`}
+                >
+                  <p className="text-center text-lg font-normal">
+                    {t.visualDesc1}
+                    <span className="ptx2 font-semibold">{t.visualSpan1}</span>
+                    {t.visualDesc2}
+                    <span className="ptx2 font-semibold">{t.visualSpan2}</span>
+                    {t.visualDesc3}
+                    <span className="ptx2 font-semibold">{t.visualSpan3}</span>
+                    {t.visualDesc4}
+                  </p>
+                </div>
               </div>
+
               <div className="mt-8">
                 <a
                   href="https://behance.net/juliusaalto"
@@ -92,22 +139,46 @@ const Gallery = () => {
 
           {/* Photography Card */}
           <div className="w-full lg:w-[calc(50%-20px)] flex items-stretch">
-            <div className="mx-auto text-xl ctext font-semibold card px-10 p-10 flex flex-col justify-between">
+            <div className="mx-auto text-xl ctext font-semibold card px-10 p-10 flex flex-col justify-between w-full">
               <div>
-                <h2 className="ptx font-semibold mb-6 text-2xl flex items-center justify-center gap-3">
-                  <FontAwesomeIcon icon={faCamera} />
-                  {t.photoTitle}
-                </h2>
-                <p>
-                  {t.photoDesc1}
-                  <span className="ptx2 font-semibold">{t.photoSpan1}</span>
-                  {t.photoDesc2}
-                  <span className="ptx2 font-semibold">{t.photoSpan2}</span>
-                  {t.photoDesc3}
-                  <span className="ptx2 font-semibold">{t.photoSpan3}</span>
-                  {t.photoDesc4}
-                </p>
+                <button
+                  onClick={() => setPhotoExpanded(!photoExpanded)}
+                  className="w-full font-semibold mb-4 text-2xl flex items-center justify-between gap-3 ptx focus:outline-none group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3 text-left">
+                    <FontAwesomeIcon
+                      icon={faCamera}
+                      className="flex-shrink-0"
+                    />
+                    <span className="leading-tight">{t.photoTitle}</span>
+                  </div>
+                  <FontAwesomeIcon
+                    icon={faChevronDown}
+                    className={`text-lg text-black/50 transition-transform duration-300 flex-shrink-0 ${
+                      photoExpanded ? "rotate-180" : "rotate-0"
+                    }`}
+                  />
+                </button>
+
+                <div
+                  className={`transition-all duration-300 overflow-hidden ${
+                    photoExpanded
+                      ? "max-h-[500px] opacity-100 mt-4"
+                      : "max-h-0 opacity-0 mt-0"
+                  }`}
+                >
+                  <p className="text-center text-lg font-normal">
+                    {t.photoDesc1}
+                    <span className="ptx2 font-semibold">{t.photoSpan1}</span>
+                    {t.photoDesc2}
+                    <span className="ptx2 font-semibold">{t.photoSpan2}</span>
+                    {t.photoDesc3}
+                    <span className="ptx2 font-semibold">{t.photoSpan3}</span>
+                    {t.photoDesc4}
+                  </p>
+                </div>
               </div>
+
               <div className="mt-8">
                 <a
                   href="https://visionbyjulius.vercel.app/"

@@ -1,32 +1,28 @@
 import React from "react";
 import { useLanguage } from "../context/LanguageContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faExternalLinkAlt
+} from "@fortawesome/free-solid-svg-icons";
 
 const thesisContent = {
   fi: {
-    title: "Ammattikorkeakoulun opinnäytetyöni",
-    linkText: "Sytytä kynttilä -WordPress-lisäosan kehittäminen",
+    title: "Opinnäytetyö",
+    subtitle: "Ammattikorkeakoulututkinnon lopputyö",
+    linkText: "Lue opinnäytetyö",
+    projectName: "Sytytä kynttilä -WordPress-lisäosan kehittäminen",
     linkUrl: "https://bit.ly/43pT6JA",
-    p1Before: "Opinnäytetyön aiheena oli kehittää ",
-    p1Highlight: "’Sytytä kynttilä’ -WordPress-lisäosa",
-    p1After:
-      ", joka mahdollistaa virtuaalisten muistokynttilöiden sytyttämisen Lumivaarassa menehtyneiden läheisten muistolle.",
-    p2Before: "Opinnäytetyöstäni saama ",
-    p2Highlight: "täysi arvosana 5/5",
-    p2After:
-      " on minulle suuri merkkipaalu, joka edesauttaa merkittävästi ammatillista kehitystä.",
+    p1: "Kehitin opinnäytetyönäni ’Sytytä kynttilä’ -WordPress-lisäosan, joka mahdollistaa virtuaalisten muistokynttilöiden sytyttämisen Lumivaarassa menehtyneiden läheisten muistolle.",
+    p2: "Sain työlleni arvosanan 5/5. Tämä projekti oli tärkeä askel teknisessä ja ammatillisessa kehityksessäni, ja se opetti syvällisesti käyttäjälähtöisestä sovelluskehityksestä.",
   },
   en: {
-    title: "My thesis of University of Applied Sciences studies",
-    linkText: "Development of Light a Candle -plugin for WordPress",
+    title: "Thesis",
+    subtitle: "University of Applied Sciences Degree Project",
+    linkText: "Read thesis",
+    projectName: "Development of Light a Candle -plugin for WordPress",
     linkUrl: "https://bit.ly/43pT6JA",
-    p1Before: "The subject of this thesis was to develop a ",
-    p1Highlight: "‘Light a Candle’ -WordPress plugin",
-    p1After:
-      ", which will allow users to create innovative way to light virtual memorial candles for their deceased loved ones who passed away in Lumivaara.",
-    p2Before: "Achieving the ",
-    p2Highlight: "perfect score",
-    p2After:
-      " of five points for my thesis is a major milestone, and I am confident that this accomplishment will significantly elevate my career.",
+    p1: "For my thesis, I developed the ’Light a Candle’ WordPress plugin, which provides an intuitive platform for users to light virtual memorial candles for their loved ones from Lumivaara.",
+    p2: "Graded with the highest score (5/5), this project was a significant milestone in my professional growth, deepening my expertise in modern web development and user experience.",
   },
 };
 
@@ -36,27 +32,46 @@ const Thesis = () => {
 
   return (
     <section className="schoolThesis mb-20">
-      <div className="mx-auto text-center pt-10 px-5 max-w-[600px] lg:max-w-[900px] mt-[100px]">
-        <h1 className="text-[30px] lg:text-[36px] uppercase text-center lg:text-center text-4xl font-bold pt-10 mb-10 text-gradient">
+      <div className="mx-auto text-center pt-10 px-5 max-w-[700px] lg:max-w-[950px] mt-[80px]">
+        {/* Otsikko */}
+        <h1 className="text-[30px] lg:text-[36px] uppercase font-bold text-gradient mb-3 flex items-center justify-center gap-3">
           {t.title}
         </h1>
-        <a
-          className="a text-3xl font-semibold ptx"
-          href={t.linkUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {t.linkText}
-        </a>
-        <p className="mx-auto text-xl mt-10 ptx font-medium card px-10 p-10">
-          {t.p1Before}
-          <span className="ptx2 font-semibold">{t.p1Highlight}</span>
-          {t.p1After} <br />
-          <br />
-          {t.p2Before}
-          <span className="ptx2 font-semibold">{t.p2Highlight}</span>
-          {t.p2After}
+        <p className="text-sm sm:text-base font-medium ptx2 uppercase tracking-wider mb-8">
+          {t.subtitle}
         </p>
+
+        {/* Kortti */}
+        <div className="card mx-auto p-6 sm:p-10 flex flex-col gap-6 shadow-sm text-center">
+          {/* Projektin nimi / otsikko sisällä */}
+          <div>
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold ptx leading-snug">
+              {t.projectName}
+            </h3>
+          </div>
+
+          {/* Leipätekstit */}
+          <div className="space-y-4 text-base sm:text-lg lg:text-xl ctext font-medium leading-relaxed opacity-95">
+            <p>{t.p1}</p>
+            <p>{t.p2}</p>
+          </div>
+
+          {/* Painike */}
+          <div className="pt-2">
+            <a
+              href={t.linkUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold text-white bg-sky-600 hover:bg-sky-500 rounded-xl transition-all shadow-sm"
+            >
+              <span>{t.linkText}</span>
+              <FontAwesomeIcon
+                icon={faExternalLinkAlt}
+                className="text-sm shrink-0"
+              />
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );
