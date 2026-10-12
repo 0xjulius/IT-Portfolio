@@ -5,7 +5,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { LanguageProvider } from "./context/LanguageContext";
+import { LanguageProvider } from "./context/LanguageContext.jsx";
 import LanguageToggle from "./components/LanguageToggle.jsx"; // <-- Tuodaan kielinappi
 import Header from "./components/Header.jsx";
 import Home from "./components/Home.jsx";
@@ -21,7 +21,7 @@ import Gallery from "./components/Gallery.jsx";
 import ProjectsNew from "./components/ProjectsNew.jsx";
 import GitHubHeatmap from "./components/GitHubHeatmap.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
-import VantaBackground from "./components/VantaBackground";
+import VantaBackground from "./components/VantaBackground.jsx";
 
 // Komponentti, joka nollaa vierityksen AINA kun URL-reitti (pathname) muuttuu
 function ScrollToTop() {
