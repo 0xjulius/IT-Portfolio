@@ -6,6 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { LanguageProvider } from "./context/LanguageContext.jsx";
 import LanguageToggle from "./components/LanguageToggle.jsx"; // <-- Tuodaan kielinappi
 import Header from "./components/Header.jsx";
@@ -89,6 +90,7 @@ function App() {
 
         {/* Vercel Analytics */}
         <Analytics />
+        <SpeedInsights />
       </Router>
     </LanguageProvider>
   );
