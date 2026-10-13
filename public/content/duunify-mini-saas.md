@@ -448,148 +448,130 @@ Se ei ole enää pelkästään työnhaun seurantatyökalu, vaan alusta, joka voi
 ## 9. Projektin Rakenne
 ```
 duunify/
-│
-├── app/                                  # Next.js App Router
-│   │
-│   ├── admin/                            # Admin-paneeli
-│   │   ├── applications/
+├── .env.local
+├── .gitignore
+├── app
+│   ├── admin
+│   │   ├── applications
 │   │   ├── layout.tsx
-│   │   ├── logs/
+│   │   ├── logs
 │   │   │   └── page.tsx
 │   │   ├── page.tsx
-│   │   └── users/
+│   │   └── users
 │   │       └── page.tsx
-│   │
-│   ├── api/                              # Backend API -reitit
-│   │   ├── admin/
-│   │   │   └── users/
-│   │   │       └── [id]/
-│   │   │           ├── ban/
+│   ├── api
+│   │   ├── admin
+│   │   │   └── users
+│   │   │       └── [id]
+│   │   │           ├── ban
 │   │   │           │   └── route.ts
-│   │   │           ├── confirm/
+│   │   │           ├── confirm
 │   │   │           │   └── route.ts
 │   │   │           └── route.ts
-│   │   │
-│   │   ├── contact/
+│   │   ├── contact
 │   │   │   └── route.ts
-│   │   │
-│   │   ├── generate-cover-letter/
+│   │   ├── cron
 │   │   │   └── route.ts
-│   │   │
-│   │   ├── parse-job/
+│   │   ├── generate-cover-letter
 │   │   │   └── route.ts
-│   │   │
-│   │   └── webhooks/
-│   │       └── new-user/
+│   │   ├── parse-job
+│   │   │   └── route.ts
+│   │   ├── ping
+│   │   │   └── route.ts
+│   │   └── webhooks
+│   │       └── new-user
 │   │           └── route.ts
-│   │
-│   ├── applications/                     # Työhakemusten hallinta
+│   ├── applications
 │   │   ├── AddApplicationForm.tsx
 │   │   ├── ApplicationCard.tsx
 │   │   ├── ApplicationDialog.tsx
 │   │   ├── page.tsx
-│   │   └── [id]/
-│   │
-│   ├── auth/
-│   │   └── callback/
+│   │   └── [id]
+│   ├── auth
+│   │   └── callback
 │   │       └── route.ts
-│   │
-│   ├── banned/
+│   ├── banned
 │   │   └── page.tsx
-│   │
-│   ├── calendar/
+│   ├── calendar
 │   │   └── page.tsx
-│   │
-│   ├── changelog/
+│   ├── changelog
 │   │   └── page.tsx
-│   │
-│   ├── contact/
+│   ├── contact
 │   │   └── page.tsx
-│   │
-│   ├── dashboard/
+│   ├── dashboard
 │   │   └── page.tsx
-│   │
-│   ├── demo/                             # Kirjautumaton demo
-│   │   ├── applications/
+│   ├── demo
+│   │   ├── applications
 │   │   │   └── page.tsx
-│   │   ├── calendar/
+│   │   ├── calendar
 │   │   │   └── page.tsx
-│   │   ├── favorites/
+│   │   ├── demosettings
 │   │   │   └── page.tsx
-│   │   ├── history/
+│   │   ├── favorites
 │   │   │   └── page.tsx
-│   │   ├── job-assistant/
+│   │   ├── history
+│   │   │   └── page.tsx
+│   │   ├── job-assistant
 │   │   │   ├── page.tsx
-│   │   │   └── [id]/
+│   │   │   └── [id]
 │   │   │       ├── page.tsx
-│   │   │       └── result/
+│   │   │       └── result
 │   │   │           └── page.tsx
 │   │   └── page.tsx
-│   │
 │   ├── error.tsx
 │   ├── favicon.ico
-│   │
-│   ├── favorites/
+│   ├── favorites
 │   │   └── page.tsx
-│   │
 │   ├── globals.css
-│   │
-│   ├── history/
+│   ├── history
 │   │   └── page.tsx
-│   │
-│   ├── job-assistant/                    # Työnhakuavustaja
+│   ├── job-assistant
+│   │   ├── cover-letters
+│   │   │   └── page.tsx
 │   │   ├── page.tsx
-│   │   └── [id]/
-│   │       ├── generate/
+│   │   └── [id]
+│   │       ├── generate
 │   │       │   └── page.tsx
 │   │       ├── page.tsx
-│   │       └── result/
+│   │       └── result
 │   │           └── page.tsx
-│   │
 │   ├── layout.tsx
-│   │
-│   ├── login/
+│   ├── login
 │   │   ├── actions.ts
 │   │   └── page.tsx
-│   │
-│   ├── logout/
+│   ├── logout
 │   │   └── page.tsx
-│   │
 │   ├── not-found.tsx
-│   ├── page.tsx                          # Landing page
-│   │
-│   ├── privacy/
+│   ├── page.tsx
+│   ├── privacy
 │   │   └── page.tsx
-│   │
-│   ├── settings/
+│   ├── settings
 │   │   └── page.tsx
-│   │
-│   └── tos/
+│   └── tos
 │       └── page.tsx
-│
-├── components/                           # Uudelleenkäytettävät React-komponentit
-│   │
-│   ├── Admin/
+├── components
+│   ├── Admin
 │   │   ├── AdminSidebar.tsx
 │   │   ├── LogDetailModal.tsx
+│   │   ├── UserDetailsModal.tsx
 │   │   └── UsersTable.tsx
-│   │
 │   ├── AdminCard.tsx
-│   │
-│   ├── applications/
+│   ├── AiCreditsBadge.tsx
+│   ├── applications
 │   │   ├── AddAttachment.tsx
 │   │   ├── ApplicationHistory.tsx
-│   │   └── CompanyLogo.tsx
-│   │
-│   ├── calendar/
+│   │   ├── ApplicationRow.tsx
+│   │   ├── ApplicationStats.tsx
+│   │   ├── CompanyLogo.tsx
+│   │   └── QuickAddApplication.tsx
+│   ├── calendar
 │   │   ├── AddEventModal.tsx
 │   │   ├── CalendarClient.tsx
 │   │   ├── CalendarView.tsx
 │   │   ├── EventDetailModal.tsx
 │   │   ├── MiniCalendar.tsx
 │   │   └── QuickEvents.tsx
-│   │
-│   ├── dashboard/
+│   ├── dashboard
 │   │   ├── ActivityHeatmap.tsx
 │   │   ├── ApplicationChart.tsx
 │   │   ├── ApplicationTrendChart.tsx
@@ -602,63 +584,54 @@ duunify/
 │   │   ├── RecentApplications.tsx
 │   │   ├── StatsCard.tsx
 │   │   └── UpcomingDeadlines.tsx
-│   │
-│   ├── demo/
+│   ├── demo
 │   │   ├── DemoBanner.tsx
 │   │   ├── DemoCompanyLogo.tsx
+│   │   ├── DemoHeader.tsx
+│   │   ├── DemoNotificationsDropdown.tsx
 │   │   └── DemoSidebar.tsx
-│   │
 │   ├── DownloadButton.tsx
-│   │
-│   ├── favorites/
-│   │
+│   ├── favorites
 │   ├── Footer.tsx
-│   │
-│   ├── history/
+│   ├── Header.tsx
+│   ├── history
 │   │   └── HistoryClient.tsx
-│   │
-│   ├── job-assistant/                    # Työnhakuavustajan komponentit
+│   ├── job-assistant
+│   │   ├── id
+│   │   │   ├── DocumentItem.tsx
+│   │   │   ├── InfoSidebar.tsx
+│   │   │   ├── JobDescriptionCard.tsx
+│   │   │   ├── JobHeader.tsx
+│   │   │   ├── result
+│   │   │   │   ├── CoverLetterCard.tsx
+│   │   │   │   ├── CoverLetterSkeleton.tsx
+│   │   │   │   ├── DocumentHeader.tsx
+│   │   │   │   ├── ResultHeader.tsx
+│   │   │   │   └── ResultSidebar.tsx
+│   │   │   └── UserDocumentsCard.tsx
 │   │   ├── JobAssistantHeader.tsx
 │   │   ├── JobCard.tsx
 │   │   ├── JobList.tsx
-│   │   ├── StepIndicator.tsx
-│   │   │
-│   │   └── id/
-│   │       ├── DocumentItem.tsx
-│   │       ├── InfoSidebar.tsx
-│   │       ├── JobDescriptionCard.tsx
-│   │       ├── JobHeader.tsx
-│   │       ├── UserDocumentsCard.tsx
-│   │       │
-│   │       └── result/
-│   │           ├── CoverLetterCard.tsx
-│   │           ├── CoverLetterSkeleton.tsx
-│   │           ├── DocumentHeader.tsx
-│   │           ├── ResultHeader.tsx
-│   │           └── ResultSidebar.tsx
-│   │
+│   │   └── StepIndicator.tsx
 │   ├── LandingIndexCard.tsx
 │   ├── local-date.tsx
 │   ├── LoginModal.tsx
-│   │
-│   ├── logout/
+│   ├── logout
 │   │   ├── LogoutConfirmModal.tsx
 │   │   └── ModalProvider.tsx
-│   │
 │   ├── NavBar.tsx
 │   ├── NavBarWait.tsx
-│   │
-│   ├── settings/
+│   ├── NotificationsDropdown.tsx
+│   ├── PageHeader.tsx
+│   ├── settings
 │   │   ├── AvatarUpload.tsx
 │   │   ├── PasswordChangeForm.tsx
 │   │   ├── ProfileDetailsForm.tsx
 │   │   └── SettingsClient.tsx
-│   │
 │   ├── Sidebar.tsx
 │   ├── SimpleNav.tsx
 │   ├── theme-provider.tsx
-│   │
-│   ├── ui/
+│   ├── ui
 │   │   ├── AppToaster.tsx
 │   │   ├── avatar.tsx
 │   │   ├── badge.tsx
@@ -666,8 +639,10 @@ duunify/
 │   │   ├── card.tsx
 │   │   ├── chart.tsx
 │   │   ├── dialog.tsx
+│   │   ├── dropdown-menu.tsx
 │   │   ├── input.tsx
 │   │   ├── progress.tsx
+│   │   ├── select.tsx
 │   │   ├── sheet.tsx
 │   │   ├── skeleton.tsx
 │   │   ├── skeletons.tsx
@@ -675,58 +650,69 @@ duunify/
 │   │   ├── tabs.tsx
 │   │   ├── TimerComponent.tsx
 │   │   └── tooltip.tsx
-│   │
-│   └── WaitlistSignup.tsx
-│
-├── lib/                                  # Sovelluslogiikka
-│   ├── anonymize.ts                      # AI-käsittelyn henkilötietojen suojaus
-│   ├── applications.tsx                  # Hakemuslogiikka
-│   ├── auth-errors.ts                    # Autentikointivirheiden käsittely
-│   ├── calendar.ts                       # Kalenterilogiikka
-│   ├── changelog.ts                      # Muutosloki
-│   ├── demo-data.ts                      # Demon mock-data
-│   ├── export-csv.ts                     # CSV-vienti
-│   ├── history.ts                        # Historia- ja lokilogiikka
-│   ├── logger.ts                         # Lokitus
-│   ├── middleware.ts                     # Supabase-istunnon päivityslogiikka
-│   ├── ratelimit.ts                      # Rate limiting
-│   ├── supabase-admin.ts                 # Supabase Admin -yhteys
-│   ├── supabase-server.ts                # Supabase-palvelinyhteys
-│   ├── supabase.ts                       # Supabase-selainyhteys
-│   └── utils.ts                          # Yleiset apufunktiot
-│
-├── hooks/                                # Custom React Hooks
-│   ├── useAuth.ts
-│   ├── useApplications.ts
-│   ├── useDashboard.ts
-│   └── useProfile.ts
-│
-├── types/                                # TypeScript-tyypit
-│   ├── application.ts
-│   ├── user.ts
+│   ├── WaitlistSignup.tsx
+│   └── WelcomeModal.tsx
+├── components.json
+├── eslint.config.mjs
+├── lib
+│   ├── anonymize.ts
+│   ├── applications.tsx
+│   ├── auth-errors.ts
+│   ├── calendar.ts
+│   ├── changelog.ts
+│   ├── demo-data.ts
+│   ├── export-csv.ts
 │   ├── history.ts
-│   └── database.ts
-│
-├── utils/                                # Pienet yleiset apufunktiot
-│   ├── formatDate.ts
-│   ├── formatSalary.ts
-│   ├── validators.ts
-│   └── constants.ts
-│
-├── public/                               # Staattiset resurssit
-│   ├── logo.svg
-│   ├── favicon.ico
-│   ├── icons/
-│   ├── screenshots/
-│   └── images/
-│
-├── middleware.ts                         # Vanha / yhteensopivuus
-├── proxy.ts                              # Reittien suojaus ja session tarkistus
-│
-├── package.json
-├── tsconfig.json
+│   ├── logger.ts
+│   ├── middleware.ts
+│   ├── ratelimit.ts
+│   ├── supabase-admin.ts
+│   ├── supabase-server.ts
+│   ├── supabase.ts
+│   └── utils.ts
+├── next-env.d.ts
 ├── next.config.ts
-└── README.md
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── proxy.ts
+├── public
+│   ├── demo-logos
+│   │   ├── dna.png
+│   │   ├── elisa.png
+│   │   ├── fiskars.png
+│   │   ├── fortum.png
+│   │   ├── futurice.webp
+│   │   ├── gofore.webp
+│   │   ├── kone.png
+│   │   ├── kone.webp
+│   │   ├── neste.png
+│   │   ├── nixu.webp
+│   │   ├── nordea.png
+│   │   ├── opryhma.png
+│   │   ├── reaktor.png
+│   │   ├── relex.png
+│   │   ├── relex.webp
+│   │   ├── relexsolutions.png
+│   │   ├── sok.png
+│   │   ├── supercell.jpg
+│   │   ├── supercell.png
+│   │   ├── telia.png
+│   │   ├── varma.png
+│   │   ├── vincit.png
+│   │   ├── vr.jpg
+│   │   └── wolt.png
+│   ├── fi.svg
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── login-bg.png
+│   ├── next.svg
+│   ├── og-image.png
+│   ├── vercel.svg
+│   └── window.svg
+├── README.md
+├── tsconfig.json
+└── vercel.json
 ```
 
 ## Yhteenveto
