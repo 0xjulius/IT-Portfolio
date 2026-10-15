@@ -16,12 +16,37 @@ import awardImage9 from "../images/m365.png";
 import awardImage10 from "../images/m365-2.png";
 import awardImage11 from "../images/m365-3.png";
 import awardImage12 from "../images/ai-agents.png";
+import awardImage13 from "../images/cf-ibm.png";
 
 const awardsContent = {
   fi: {
     certificatesTitle: "Sertifikaatit & Suoritukset",
     honorsTitle: "Tunnustukset & Palkinnot",
     certificates: [
+      {
+        image: awardImage13,
+        title: "Cybersecurity Fundamentals",
+        issuedBy: "Lokakuu, 2026 - IBM, SkillsBuild",
+        desc: (
+          <>
+            Osoitus perustason ymmärryksestä{" "}
+            <span className="ptx2 font-bold">tietoturvan käsitteistä</span>,{" "}
+            tavoitteista ja käytännöistä. Koulutus kattoi kyberuhkat,
+            hyökkäystyypit,{" "}
+            social engineering,{" "}
+            turvallisuusstrategiat, salausmenetelmät sekä organisaatioiden tavat{" "}
+            ehkäistä, havaita ja reagoida kyberhyökkäyksiin.{" "}
+            <a
+              href="https://www.credly.com/badges/dd81befa-e8b1-46c0-a8db-db67bb0e563e/public_url"
+              target="_blank"
+              rel="noreferrer"
+              className="text-purple-600 font-semibold inline-block mt-2"
+            >
+              Katso Credly-sertifikaatti →
+            </a>
+          </>
+        ),
+      },
       {
         image: awardImage12,
         title: "Microsoft Copilot: AI Agents",
@@ -201,6 +226,30 @@ const awardsContent = {
     certificatesTitle: "Certificates",
     honorsTitle: "Awards and Honors",
     certificates: [
+      {
+        image: awardImage13,
+        title: "Cybersecurity Fundamentals",
+        issuedBy: "October, 2026 - IBM, SkillsBuild",
+        desc: (
+          <>
+            Demonstrates a foundational understanding of{" "}
+            <span className="ptx2 font-bold">cybersecurity concepts</span>,{" "}
+            objectives, and practices. The training covered cyber threats,{" "}
+            attack types,{" "}
+            <span className="ptx2 font-bold">social engineering</span>, security
+            strategies, cryptography, and organizational methods to prevent,
+            detect, and respond to cyber attacks.{" "}
+            <a
+              href="https://www.credly.com/badges/dd81befa-e8b1-46c0-a8db-db67bb0e563e/public_url"
+              target="_blank"
+              rel="noreferrer"
+              className="text-purple-600 underline font-semibold inline-block mt-2"
+            >
+              View Credly Certificate →
+            </a>
+          </>
+        ),
+      },
       {
         image: awardImage12,
         title: "Microsoft Copilot: AI Agents",
