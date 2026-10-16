@@ -27,16 +27,16 @@ export const projectsData = [
   {
     slug: "gyre-roulette",
     hasArticle: true,
-    tags: ["React", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    tags: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Front-End"],
     image: project23,
-    titleEn: "Gyre Roulette – Interactive Play-for-Fun Roulette",
-    titleFi: "Gyre Roulette – Leikkimielinen interaktiivinen ruletti",
+    titleEn: "AgoraPlay – Interactive Play-for-Fun Casino Games",
+    titleFi: "AgoraPlay – Leikkimielinen interaktiivinen pelikasino",
     descriptionEn:
-      "A modern, interactive 15-slot browser roulette demo game built strictly for fun. Features provably fair randomness via CSPRNG Engine, synchronized audio-visual animations, and a responsive UI.",
+      "Modern, high-performance web application featuring a suite of interactive casino games including Plinko, Roulette, and Crash.",
     descriptionFi:
-      "Moderni 15-paikkainen demo-ruletti puhtaasti leikkimieliseen viihde- ja testi-käyttöön. Sisältää todennettavasti satunnaisen CSPRNG-moottorin, ja responsiivisen käyttöliittymän.",
-    github: "https://github.com/0xjulius/casino",
-    live: "https://gyre-roulette.vercel.app",
+      "Moderni web-sovellus, joka sisältää interaktiivisia kasinopelielämyksiä, kuten Plinko, Roulette ja Crash.",
+    github: "https://github.com/0xjulius/Casino-Fun-Games",
+    live: "https://agora-play.vercel.app",
     badgeEn: "NEW!",
     badgeFi: "UUSI!",
   },
