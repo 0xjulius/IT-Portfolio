@@ -267,8 +267,9 @@ export const projectsData = [
     badgeFi: "",
   },
   {
-    slug: "react-tailwind-it-portfolio",
+    slug: "it-portfolio",
     tags: ["React", "Tailwind CSS", "JavaScript"],
+    hasArticle: true,
     image: project,
     titleEn: "IT-Portfolio with React + Tailwind",
     titleFi: "IT-Portfolio Reactilla ja Tailwindilla",
@@ -277,7 +278,7 @@ export const projectsData = [
     descriptionFi:
       "Tämä portfolio-sivusto! Rakennettu uudelleen Reactilla ja Tailwindilla moderneja web-kehitystaitoja hyödyntäen.",
     github: "https://github.com/0xjulius/react-portfolio",
-    live: "https://react-portfolio-0xjulius.vercel.app/",
+    live: "https://juliusaalto.com",
     badgeEn: "",
     badgeFi: "",
   },
