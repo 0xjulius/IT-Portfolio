@@ -13,12 +13,39 @@ import awardImage11 from "../images/m365-3.png";
 import awardImage12 from "../images/ai-agents.png";
 import awardImage13 from "../images/cf-ibm.png";
 import awardImage14 from "../images/ibm-design-ai.png";
+import awardImage15 from "../images/ibm-ai-lit.png";
 
 export const awardsContent = {
   fi: {
     certificatesTitle: "Sertifikaatit & Suoritukset",
     honorsTitle: "Tunnustukset & Palkinnot",
     certificates: [
+      {
+        image: awardImage15, // Varmista että kuvamuuttuja on tuotu tiedoston alussa
+        title: "AI Literacy",
+        issuedBy: "Lokakuu, 2026 - IBM, SkillsBuild",
+        desc: (
+          <>
+            Osoittaa tekoälyn perustason osaamista. Henkilö osaa kuvailla, miten{" "}
+            <span className="ptx2 font-bold">tekoäly toimii</span>, selittää sen{" "}
+            keskeisiä käsitteitä, muotoja ja mahdollistavia teknologioita,{" "}
+            punnita tekoälyn hyötyjä ja riskejä, käsitellä{" "}
+            <span className="ptx2 font-bold">AI-etiikan periaatteita</span> sekä
+            tunnistaa tekoälyn sovelluksia arjessa, työssä ja eri toimialoilla.
+            Suorittaja on harjoitellut tekoälyn käyttöä datahaasteiden
+            ratkaisemisessa ja vuorovaikuttanut tekoälykäyttöliittymien kanssa
+            yksinkertaisten liiketoimintaratkaisujen luomiseksi.{" "}
+            <a
+              href="https://www.credly.com/badges/ee84098f-e4cb-4ec4-a19e-241c63946463"
+              target="_blank"
+              rel="noreferrer"
+              className="text-purple-600 underline font-semibold inline-block mt-2"
+            >
+              Katso Credly-sertifikaatti →
+            </a>
+          </>
+        ),
+      },
       {
         image: awardImage14,
         title: "Team Essentials for Designing AI Solutions",
@@ -253,6 +280,33 @@ export const awardsContent = {
     certificatesTitle: "Certificates",
     honorsTitle: "Awards and Honors",
     certificates: [
+      {
+        image: awardImage15, // Varmista että kuvamuuttuja on tuotu tiedoston alussa
+        title: "AI Literacy",
+        issuedBy: "October, 2026 - IBM, SkillsBuild",
+        desc: (
+          <>
+            Demonstrates foundational knowledge of{" "}
+            <span className="ptx2 font-bold">artificial intelligence</span>. The{" "}
+            individual can describe how AI works; explain AI concepts, forms,
+            and enabling technologies; weigh the benefits and risks of AI;
+            discuss principles of{" "}
+            <span className="ptx2 font-bold">AI ethics</span>; and recognize
+            applications of AI in everyday life and work and across industries.
+            The earner has practiced using AI to help solve data challenges and
+            interacted with AI interfaces to create and refine simple business
+            solutions.{" "}
+            <a
+              href="https://www.credly.com/badges/ee84098f-e4cb-4ec4-a19e-241c63946463"
+              target="_blank"
+              rel="noreferrer"
+              className="text-purple-600 underline font-semibold inline-block mt-2"
+            >
+              View Credly Certificate →
+            </a>
+          </>
+        ),
+      },
       {
         image: awardImage14,
         title: "Team Essentials for Designing AI Solutions",
