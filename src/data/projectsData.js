@@ -22,8 +22,36 @@ import project20 from "../images/project20.png";
 import project21 from "../images/project21.png";
 import project22 from "../images/project22.png";
 import project23 from "../images/project23.png";
+import project24 from "../images/project24.png";
 
 export const projectsData = [
+  {
+    slug: "rag-engine",
+    hasArticle: true,
+    tags: [
+      "TypeScript",
+      "AI",
+      "RAG",
+      "Python",
+      "Docker",
+      "TailwindCSS",
+      "Full-Stack",
+      "LM-Studio",
+    ],
+    image: project24,
+    titleEn:
+      "Local RAG Engine – A private, air-gapped solution for enterprise AI privacy",
+    titleFi:
+      "Paikallinen RAG-ratkaisu – Tietoturvallinen tekoälyratkaisu yritysten tarpeisiin",
+    descriptionEn:
+      "A local, air-gapped solution for enterprise AI privacy, ensuring data security and compliance.",
+    descriptionFi:
+      "Täysin paikallisesti toimiva tekoälyratkaisu yritysten tietosuojaan, joka varmistaa datan yksityisyyden ja säädösten noudattamisen ilman ulkoisia rajapintoja.",
+    github: "https://github.com/0xjulius/Local-RAG-Engine",
+    live: "",
+    badgeEn: "NEW!",
+    badgeFi: "UUSI!",
+  },
   {
     slug: "gyre-roulette",
     hasArticle: true,
@@ -62,8 +90,8 @@ export const projectsData = [
       "Tuotantovalmis Mini-SaaS-alusta työhakemusten seurantaan ilman Exceliä. Sisältää käyttäjätunnistautumisen, automaattisen datan haun työpaikkalinkeistä sekä visuaaliset tilastot.",
     github: "https://github.com/0xjulius/Duunify",
     live: "https://duunify.com",
-    badgeEn: "NEW!",
-    badgeFi: "UUSI!",
+    badgeEn: "",
+    badgeFi: "",
   },
   {
     slug: "atm-machine-react",
