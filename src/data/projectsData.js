@@ -46,7 +46,7 @@ export const projectsData = [
     descriptionEn:
       "A local, air-gapped solution for enterprise AI privacy, ensuring data security and compliance.",
     descriptionFi:
-      "Täysin paikallisesti toimiva tekoälyratkaisu yritysten tietosuojaan, joka varmistaa datan yksityisyyden ja säädösten noudattamisen ilman ulkoisia rajapintoja.",
+      "Täysin paikallisesti toimiva tekoälyratkaisu yrityksille, joka varmistaa datan yksityisyyden ja säädösten noudattamisen ilman ulkoisia rajapintoja.",
     github: "https://github.com/0xjulius/Local-RAG-Engine",
     live: "",
     badgeEn: "NEW!",

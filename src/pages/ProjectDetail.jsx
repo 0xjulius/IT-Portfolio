@@ -13,7 +13,6 @@ export default function ProjectDetail() {
 
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
-  const [fileDate, setFileDate] = useState("");
 
   const project = projects.find((p) => p.slug === slug);
 
@@ -23,6 +22,15 @@ export default function ProjectDetail() {
       ? project.titleFi
       : project.titleEn || project.title
     : "";
+
+  // Muotoillaan päivämäärä suoraan projektin tiedoista (turvallinen tuotannossa Vercelissä)
+  const formattedDate = project?.date
+    ? new Date(project.date).toLocaleDateString(isFi ? "fi-FI" : "en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -38,20 +46,6 @@ export default function ProjectDetail() {
         if (!res.ok || (contentType && contentType.includes("text/html"))) {
           throw new Error("No markdown writeup found");
         }
-
-        const lastModified = res.headers.get("last-modified");
-        if (lastModified) {
-          const formattedDate = new Date(lastModified).toLocaleDateString(
-            "fi-FI",
-            {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            },
-          );
-          setFileDate(formattedDate);
-        }
-
         return res.text();
       })
       .then((text) => {
@@ -124,9 +118,11 @@ export default function ProjectDetail() {
             </h1>
 
             <div className="flex flex-wrap items-center gap-4 mb-6">
-              {fileDate && (
+              {formattedDate && (
                 <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
-                  <span>Päivitetty: {fileDate}</span>
+                  <span>
+                    {isFi ? "Päivitetty:" : "Updated:"} {formattedDate}
+                  </span>
                 </div>
               )}
 
