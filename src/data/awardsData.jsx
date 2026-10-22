@@ -14,12 +14,42 @@ import awardImage12 from "../images/ai-agents.png";
 import awardImage13 from "../images/cf-ibm.png";
 import awardImage14 from "../images/ibm-design-ai.png";
 import awardImage15 from "../images/ibm-ai-lit.png";
+import awardImage16 from "../images/hardware.png";
 
 export const awardsContent = {
   fi: {
     certificatesTitle: "Sertifikaatit & Suoritukset",
     honorsTitle: "Tunnustukset & Palkinnot",
     certificates: [
+      {
+        image: awardImage16, // Varmista että kuvamuuttuja on tuotu tiedoston alussa
+        title: "Hardware Components and Troubleshooting",
+        issuedBy: "Lokakuu, 2026 - IBM, SkillsBuild",
+        desc: (
+          <>
+            Osoittaa edistyneitä taitoja{" "}
+            <span className="ptx2 font-bold">vianmääritystekniikoiden</span>{" "}
+            soveltamisessa työpöytäkoneiden, mobiililaitteiden ja verkkojen{" "}
+            <span className="ptx2 font-bold">laitteistokomponentteihin</span>.
+            Henkilöllä on tekninen tietotaito ja käytännön taidot oireiden
+            arviointiin,{" "}
+            <span className="ptx2 font-bold">ongelmien diagnosointiin</span>,
+            todennäköisen syyn teorian muodostamiseen,{" "}
+            <span className="ptx2 font-bold">vianmääritysmenetelmän</span>{" "}
+            noudattamiseen ja laitteistovian ratkaisuun. Suorittaja on
+            harjoitellut tärkeitä työelämätaitoja.{" "}
+            <a
+              href="https://www.credly.com/earner/earned/badge/b541ba0c-db89-4f47-bf96-c8388a28fc03 "
+              target="_blank"
+              rel="noreferrer"
+              className="text-purple-600 underline font-semibold inline-block mt-2"
+            >
+              Katso Credly-sertifikaatti →
+            </a>
+          </>
+        ),
+      },
+
       {
         image: awardImage15, // Varmista että kuvamuuttuja on tuotu tiedoston alussa
         title: "AI Literacy",
@@ -280,6 +310,33 @@ export const awardsContent = {
     certificatesTitle: "Certificates",
     honorsTitle: "Awards and Honors",
     certificates: [
+      {
+        image: awardImage16, // Muista tarkistaa oikea kuvamuuttuja
+        title: "Hardware Components and Troubleshooting",
+        issuedBy: "October, 2026 - IBM, SkillsBuild",
+        desc: (
+          <>
+            This credential earner has the advanced skills to apply{" "}
+            <span className="ptx2 font-bold">troubleshooting techniques</span>{" "}
+            to <span className="ptx2 font-bold">hardware components</span> for
+            desktop computers, mobile devices, and networks. The individual has
+            the technical knowledge and practical skills to review symptoms,{" "}
+            <span className="ptx2 font-bold">diagnose the issue</span>,
+            establish a theory of probable cause, follow a{" "}
+            <span className="ptx2 font-bold">troubleshooting methodology</span>,
+            and troubleshoot to resolve the hardware issue. The earner has
+            practiced essential workplace skills.{" "}
+            <a
+              href="https://www.credly.com/earner/earned/badge/b541ba0c-db89-4f47-bf96-c8388a28fc03"
+              target="_blank"
+              rel="noreferrer"
+              className="text-purple-600 underline font-semibold inline-block mt-2"
+            >
+              View Credly Certificate →
+            </a>
+          </>
+        ),
+      },
       {
         image: awardImage15, // Varmista että kuvamuuttuja on tuotu tiedoston alussa
         title: "AI Literacy",
