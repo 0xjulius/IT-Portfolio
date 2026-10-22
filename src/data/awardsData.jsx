@@ -39,7 +39,7 @@ export const awardsContent = {
             noudattamiseen ja laitteistovian ratkaisuun. Suorittaja on
             harjoitellut tärkeitä työelämätaitoja.{" "}
             <a
-              href="https://www.credly.com/earner/earned/badge/b541ba0c-db89-4f47-bf96-c8388a28fc03 "
+              href="https://www.credly.com/badges/b541ba0c-db89-4f47-bf96-c8388a28fc03"
               target="_blank"
               rel="noreferrer"
               className="text-purple-600 underline font-semibold inline-block mt-2"
@@ -327,7 +327,7 @@ export const awardsContent = {
             and troubleshoot to resolve the hardware issue. The earner has
             practiced essential workplace skills.{" "}
             <a
-              href="https://www.credly.com/earner/earned/badge/b541ba0c-db89-4f47-bf96-c8388a28fc03"
+              href="https://www.credly.com/badges/b541ba0c-db89-4f47-bf96-c8388a28fc03"
               target="_blank"
               rel="noreferrer"
               className="text-purple-600 underline font-semibold inline-block mt-2"
