@@ -7,7 +7,7 @@ import { useLanguage } from "../context/LanguageContext";
 const navContent = {
   fi: {
     me: "Koti",
-    studies: "Opinnot",
+    studies: "Koulutus",
     projects: "Projektit",
     skills: "Osaaminen",
     accolades: "Sertifikaatit",
