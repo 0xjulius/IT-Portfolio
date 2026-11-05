@@ -23,8 +23,37 @@ import project21 from "../images/project21.png";
 import project22 from "../images/project22.png";
 import project23 from "../images/project23.png";
 import project24 from "../images/project24.png";
+import project25 from "../images/ai-agent.jpg";
 
 export const projectsData = [
+  {
+    slug: "hermes-agent-portfolio",
+    hasArticle: true,
+    publishedAt: "2026-11-05", // pakollinen, ISO-muoto YYYY-MM-DD
+    updatedAt: "2026-11-05", // valinnainen
+    tags: [
+      "AI Agent",
+      "Hugging Face",
+      "Docker",
+      "LM Studio",
+      "Local LLM",
+      "Telegram Bot",
+      "PowerShell",
+      "Automation",
+    ],
+    image: project25,
+    titleEn: "Self-Hosted AI Agent: Hermes Agent + LM Studio + Telegram",
+    titleFi:
+      "Itseisännöity tekoälyagentti: Hermes Agent + LM Studio + Telegram",
+    descriptionEn:
+      "A private, self-hosted AI agent running in Docker on Windows. Hermes Agent uses a local llm through LM Studio and is reachable via a password-protected web dashboard and a Telegram bot.",
+    descriptionFi:
+      "Paikallinen, Dockerissa pyörivä itseisännöity tekoälyagentti. Hermes Agent käyttää paikallisia kielimalleja, ja sitä käytetään salasanasuojatun web-dashboardin ja Telegram-botin kautta.",
+    github: "",
+    live: "",
+    badgeEn: "NEW!",
+    badgeFi: "UUSI!",
+  },
   {
     slug: "rag-engine",
     hasArticle: true,
