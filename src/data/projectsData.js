@@ -29,8 +29,8 @@ export const projectsData = [
   {
     slug: "hermes-agent-portfolio",
     hasArticle: true,
-    publishedAt: "2026-11-05", // pakollinen, ISO-muoto YYYY-MM-DD
-    updatedAt: "2026-11-05", // valinnainen
+    publishedAt: "2026-11-05",
+    updatedAt: "2026-11-05",
     tags: [
       "AI Agent",
       "Hugging Face",
@@ -57,6 +57,8 @@ export const projectsData = [
   {
     slug: "rag-engine",
     hasArticle: true,
+    publishedAt: "2026-10-21",
+    updatedAt: "2026-10-22",
     tags: [
       "TypeScript",
       "AI",
@@ -84,6 +86,8 @@ export const projectsData = [
   {
     slug: "gyre-roulette",
     hasArticle: true,
+    publishedAt: "2026-09-02",
+    updatedAt: "2026-09-02",
     tags: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Front-End"],
     image: project23,
     titleEn: "AgoraPlay – Interactive Play-for-Fun Casino Games",
@@ -100,6 +104,8 @@ export const projectsData = [
   {
     slug: "duunify-mini-saas",
     hasArticle: true,
+    publishedAt: "2026-05-10",
+    updatedAt: "2026-05-10",
     tags: [
       "NextJS",
       "Tailwind",
@@ -125,6 +131,8 @@ export const projectsData = [
   {
     slug: "atm-machine-react",
     hasArticle: true,
+    publishedAt: "2025-09-05",
+    updatedAt: "2025-09-05",
     tags: ["React", "Tailwind CSS", "JavaScript"],
     image: project21,
     titleEn: "ATM-machine - Simple react app with a retro vibe",
@@ -141,6 +149,8 @@ export const projectsData = [
   {
     slug: "podstation-podcast-app",
     hasArticle: true,
+    publishedAt: "2025-05-26",
+    updatedAt: "2025-05-26",
     tags: ["React", "Tailwind CSS", "API", "Serverless"],
     image: project19,
     titleEn: "The PodStation - Where podcasts come alive",
@@ -151,10 +161,14 @@ export const projectsData = [
       "Full-stack-, serverless- ja React-sovellus podcast-jaksojen selaamiseen, kuunteluun ja hakuun RSS-syötteiden kautta.",
     github: "https://github.com/0xjulius/PodStation-save-and-listen",
     live: "https://podstation-0xjulius.vercel.app/",
+    badgeEn: "",
+    badgeFi: "",
   },
   {
     slug: "ylenews-feed",
     hasArticle: true,
+    publishedAt: "2025-03-14",
+    updatedAt: "2025-03-14",
     tags: ["React", "Tailwind CSS", "Axios", "XML/RSS"],
     image: project18,
     titleEn: "Yle Uutiset - News feed solution",
@@ -171,6 +185,8 @@ export const projectsData = [
   {
     slug: "weather-app-json-api",
     hasArticle: true,
+    publishedAt: "2024-12-30",
+    updatedAt: "2024-12-30",
     tags: ["React", "Vite", "Tailwind CSS", "REST API"],
     image: project17,
     titleEn: "Weather application JSON api-request fetcher",
@@ -187,6 +203,8 @@ export const projectsData = [
   {
     slug: "python-atm-simulation",
     hasArticle: true,
+    publishedAt: "2025-01-30",
+    updatedAt: "2025-01-30",
     tags: ["Python", "CLI"],
     image: project20,
     titleEn: "Python ATM-Machine simulation",
@@ -203,6 +221,8 @@ export const projectsData = [
   {
     slug: "python-job-finder-telegram-bot",
     hasArticle: true,
+    publishedAt: "2022-06-20",
+    updatedAt: "2024-02-21",
     tags: ["Python", "Web Scraping", "Telegram Bot", "Automation"],
     image: project7,
     titleEn: "Python IT-job finder and Telegram bot",
@@ -219,6 +239,8 @@ export const projectsData = [
   {
     slug: "shop-with-elon-usestate",
     hasArticle: true,
+    publishedAt: "2024-07-01",
+    updatedAt: "2026-10-09",
     tags: ["React", "Vite", "Tailwind CSS", "JavaScript"],
     image: project15,
     titleEn: "Shop With Elon - Showcase useState on React",
@@ -235,6 +257,8 @@ export const projectsData = [
   {
     slug: "photography-gallery",
     hasArticle: true,
+    publishedAt: "2024-06-30",
+    updatedAt: "2024-10-13",
     tags: ["React", "Vite", "Tailwind CSS", "CSS Animations"],
     image: project14,
     titleEn: "Photography gallery website made with React",
@@ -250,6 +274,8 @@ export const projectsData = [
   },
   {
     slug: "lumivaara-wordpress-php-plugin",
+    publishedAt: "2023-08-30",
+    updatedAt: "2024-02-07",
     tags: ["WordPress", "PHP", "MySQL", "CSS"],
     image: project6,
     titleEn: "Lumivaara.fi - WordPress Solution + PHP WP Plugin",
@@ -295,6 +321,8 @@ export const projectsData = [
   },
   {
     slug: "bmi-calculator-python",
+    publishedAt: "2022-02-07",
+    updatedAt: "2024-02-21",
     tags: ["Python", "CLI"],
     image: project10,
     titleEn: "BMI calculator with Python",
@@ -325,8 +353,10 @@ export const projectsData = [
   },
   {
     slug: "it-portfolio",
-    tags: ["React", "Tailwind CSS", "JavaScript"],
     hasArticle: true,
+    publishedAt: "2024-03-18",
+    updatedAt: "2024-03-18",
+    tags: ["React", "Tailwind CSS", "JavaScript"],
     image: project,
     titleEn: "IT-Portfolio with React + Tailwind",
     titleFi: "IT-Portfolio Reactilla ja Tailwindilla",
@@ -341,6 +371,9 @@ export const projectsData = [
   },
   {
     slug: "flappybird-night-version",
+    hasArticle: true,
+    publishedAt: "2022-03-27",
+    updatedAt: "2022-03-27",
     tags: ["Unity", "C#", "C++", "WebGL"],
     image: project8,
     titleEn: "FlappyBird - Night version",
@@ -356,6 +389,9 @@ export const projectsData = [
   },
   {
     slug: "rock-paper-scissors-csharp",
+    hasArticle: true,
+    publishedAt: "2023-01-01",
+    updatedAt: "2023-01-01",
     tags: ["C#", ".NET", "Game Development"],
     image: project13,
     titleEn: "Rock Paper Scissors game with C#",
@@ -370,6 +406,9 @@ export const projectsData = [
   },
   {
     slug: "referral-website-concept",
+    hasArticle: true,
+    publishedAt: "2022-02-25",
+    updatedAt: "2022-02-25",
     tags: ["HTML5", "CSS3", "Responsive Design"],
     image: project5,
     titleEn: "Referral website concept HTML & CSS only",
@@ -385,6 +424,9 @@ export const projectsData = [
   },
   {
     slug: "banking-app-one-pager",
+    hasArticle: true,
+    publishedAt: "2023-04-06",
+    updatedAt: "2023-04-06",
     tags: ["React", "Vite", "Tailwind CSS", "Tutorial"],
     image: project4,
     titleEn: "Banking app one-pager React + Vite + Tailwind",
@@ -400,6 +442,9 @@ export const projectsData = [
   },
   {
     slug: "tesla-website-clone",
+    hasArticle: true,
+    publishedAt: "2024-07-01",
+    updatedAt: "2024-07-01",
     tags: ["React", "Tailwind CSS", "Tutorial"],
     image: project3,
     titleEn: "Tesla website Clone with React & Tailwind",
@@ -415,6 +460,9 @@ export const projectsData = [
   },
   {
     slug: "budget-calculator-js",
+    hasArticle: true,
+    publishedAt: "2023-11-20",
+    updatedAt: "2023-11-20",
     tags: ["HTML5", "CSS3", "JavaScript", "DOM Manipulation"],
     image: project2,
     titleEn: "Budget Calculator with HTML, CSS & JS",
@@ -430,6 +478,9 @@ export const projectsData = [
   },
   {
     slug: "crypto-price-checker",
+    hasArticle: true,
+    publishedAt: "2023-11-15",
+    updatedAt: "2023-11-15",
     tags: ["React", "Tailwind CSS", "REST API", "LocalStorage"],
     image: project1,
     titleEn: "Cryptocurrency price checker with React",
@@ -445,6 +496,9 @@ export const projectsData = [
   },
   {
     slug: "cs2-edpi-calculator-csharp",
+    hasArticle: true,
+    publishedAt: "2024-10-10",
+    updatedAt: "2024-10-10",
     tags: ["C#", "WinForms", ".NET"],
     image: project16,
     titleEn: "CS2/esports mouse eDPI calculator with C#",

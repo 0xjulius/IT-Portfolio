@@ -1,9 +1,5 @@
 # Itseisännöity tekoälyagentti: Hermes Agent + LM Studio + Telegram
 
-*Projektin yhteenveto portfoliota varten – marraskuu 2026*
-
-## Yhteenveto
-
 Rakensin Windows-koneelle itseisännöidyn tekoälyagentin. Agentti on
 [Hermes Agent](https://github.com/NousResearch/hermes-agent) (Nous Research),
 ja se pyörii Docker-kontissa. Ratkaisussa käytetään paikallista Gemma 4 12B -kielimallia (LM Studio), mutta kielimallit ovat myös vaihdettavissa nappia painamalla. Tämä arkkitehtuuri varmistaa, että kaikki data pysyy yksinomaan omassa hallinnassa ja tietoturvallisesti suljetussa ympäristössä.
@@ -14,6 +10,10 @@ Projektin aikana siirryin omatekoisesta imagesta virallisen imagen käyttöön,
 ratkaisin kontin pysyvän datan, dashboardin kirjautumisen ja agentin työkalujen
 oikeudet sekä kirjoitin käynnistysskriptin, joka pystyttää koko ympäristön
 yhdellä komennolla.
+
+
+![Projektin kuvakaappaus](/images/hermes/hermesagent.webp) 
+> Kuvakaappaus: Hermes-agentin logo.
 
 ## Miksi Gemma?
 
