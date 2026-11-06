@@ -35,15 +35,14 @@ export default function ProjectRow({
 
           {/* Tägit */}
           <div className="flex flex-wrap gap-1.5 mt-2">
-            {(tags && tags.slice(0, 3).label) ||
-              tags.slice(0, 3).map((tag, i) => (
-                <span
-                  key={i}
-                  className="text-xs font-semibold text-gray-700 bg-gray-200/80 border border-gray-300/70 px-2.5 py-0.5 rounded-md"
-                >
-                  {tag}
-                </span>
-              ))}
+            {tags?.slice(0, 3).map((tag, i) => (
+              <span
+                key={i}
+                className="text-xs font-semibold text-gray-700 bg-gray-200/80 border border-gray-300/70 px-2.5 py-0.5 rounded-md"
+              >
+                {tag}
+              </span>
+            ))}
             {tags && tags.length > 3 && (
               <span className="text-xs font-semibold text-gray-500 bg-gray-200/50 px-2 py-0.5 rounded-md">
                 +{tags.length - 3}
@@ -57,7 +56,8 @@ export default function ProjectRow({
       <div className="flex items-center gap-2 pt-1">
         {hasArticle && (
           <Link
-            to={`/projects/${slug}`}
+            to={`/blog/${slug}`}
+            state={{ from: "/#projects" }}
             className="flex-1 flex items-center justify-center gap-1 px-2 py-2.5 text-xs font-bold text-white bg-purple-700 hover:bg-purple-600 rounded-xl transition-all shadow-sm truncate"
           >
             <FaBookOpen className="text-[10px] flex-shrink-0" />

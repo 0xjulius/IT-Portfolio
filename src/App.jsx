@@ -7,6 +7,7 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { LanguageProvider } from "./context/LanguageContext.jsx";
@@ -23,26 +24,52 @@ import ScrollToTopButton from "./components/ScrollToTopButton.jsx";
 import Technologies from "./components/Technologies.jsx";
 import Gallery from "./components/Gallery.jsx";
 import ProjectsNew from "./components/ProjectsNew.jsx";
-import GitHubHeatmap from "./components/GitHubHeatmap.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import VantaBackground from "./components/VantaBackground.jsx";
 import BlogIndex from "./pages/BlogIndex.jsx";
-
-// Komponentti, joka nollaa vierityksen AINA kun URL-reitti (pathname) muuttuu
-function ScrollToTop() {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
-  return null;
-}
 
 // Ohjaa vanhat /projects/<slug>-linkit uuteen /blog/<slug>-osoitteeseen
 function RedirectToBlog() {
   const { slug } = useParams();
   return <Navigate to={`/blog/${slug}`} replace />;
+}
+
+// Pehmeä sivunvaihto Framer Motionilla:
+// vanha sivu häivytetään pois, vieritetään ylös, ja uusi sivu häivytetään näkyviin.
+// Vain opacity (ei transformia), jotta fixed/sticky-elementit eivät hypi animaation aikana.
+function AnimatedRoutes() {
+  const location = useLocation();
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <AnimatePresence
+      mode="wait"
+      initial={false}
+      // Vieritys ylös vasta kun vanha sivu on kadonnut, jottei sisältö hypi kesken häivytyksen
+      onExitComplete={() => window.scrollTo(0, 0)}
+    >
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: reduceMotion ? 0 : 0.25, ease: "easeInOut" }}
+      >
+        <Routes location={location}>
+          <Route path="/" element={<PortfolioHome />} />
+          <Route path="/blog" element={<BlogIndex />} />
+          <Route path="/blog/:slug" element={<ProjectDetail />} />
+
+          {/* Vanhat osoitteet ohjataan uusiin */}
+          <Route path="/projects/:slug" element={<RedirectToBlog />} />
+          <Route
+            path="/projects"
+            element={<Navigate to="/#projects" replace />}
+          />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
 }
 
 // Group your main portfolio sections into a single page component
@@ -86,22 +113,9 @@ function App() {
         {/* Kielinappi sijoitettu tähän, jotta se toimii moitteettomasti kaikkien sivujen ja osioiden päällä */}
         <LanguageToggle />
 
-        <ScrollToTop />
-
         <VantaBackground />
 
-        <Routes>
-          <Route path="/" element={<PortfolioHome />} />
-          <Route path="/blog" element={<BlogIndex />} />
-          <Route path="/blog/:slug" element={<ProjectDetail />} />
-
-          {/* Vanhat osoitteet ohjataan uusiin */}
-          <Route path="/projects/:slug" element={<RedirectToBlog />} />
-          <Route
-            path="/projects"
-            element={<Navigate to="/#projects" replace />}
-          />
-        </Routes>
+        <AnimatedRoutes />
 
         <ScrollToTopButton />
 

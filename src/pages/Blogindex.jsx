@@ -164,6 +164,7 @@ export default function BlogIndex() {
                   <Link
                     key={p.slug}
                     to={`${BLOG_ROUTE_BASE}/${p.slug}`}
+                    state={{ from: BLOG_ROUTE_BASE }}
                     className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:border-purple-300 hover:shadow-lg"
                   >
                     <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">

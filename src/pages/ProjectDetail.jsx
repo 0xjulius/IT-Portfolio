@@ -1,6 +1,6 @@
 // src/pages/ProjectDetail.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { projects } from "../data/projectsData";
@@ -16,6 +16,7 @@ const PROJECT_ROUTE_BASE = "/blog";
 const T = {
   fi: {
     back: "← Takaisin projekteihin",
+    backBlog: "← Takaisin blogiin",
     source: "Lähdekoodi",
     live: "Live-sivu",
     published: "Julkaistu",
@@ -33,6 +34,7 @@ const T = {
   },
   en: {
     back: "← Back to Projects",
+    backBlog: "← Back to Blog",
     source: "Source Code",
     live: "Live Site",
     published: "Published",
@@ -67,6 +69,7 @@ function ProjectNavCard({
   project,
   label,
   isFi,
+  state,
   align = "left",
   className = "",
 }) {
@@ -75,6 +78,7 @@ function ProjectNavCard({
   return (
     <Link
       to={`${PROJECT_ROUTE_BASE}/${project.slug}`}
+      state={state}
       className={`group relative block h-44 sm:h-48 overflow-hidden rounded-xl border border-slate-200 bg-slate-800 shadow-sm transition-all duration-300 hover:border-purple-300 hover:shadow-lg ${className}`}
     >
       {project.image && (
@@ -119,6 +123,12 @@ export default function ProjectDetail() {
   const { lang } = useLanguage();
   const isFi = lang === "fi";
   const t = isFi ? T.fi : T.en;
+
+  // Mistä käyttäjä tuli: linkit lähettävät tiedon mukana (state.from).
+  // Suora linkki (esim. Google) palaa oletuksena blogilistaan.
+  const routerLocation = useLocation();
+  const backTo = routerLocation.state?.from ?? "/blog";
+  const backLabel = backTo.startsWith("/#") ? t.back : t.backBlog;
 
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
@@ -335,10 +345,10 @@ export default function ProjectDetail() {
           className="max-w-5xl mx-auto flex items-center justify-between mb-8 pb-4 border-b border-slate-200"
         >
           <Link
-            to="/#projects"
+            to={backTo}
             className="inline-flex items-center gap-1 px-4 py-2 text-sm font-bold text-sky-800 bg-sky-100 hover:bg-sky-200 border border-sky-200 rounded-xl transition-all duration-200 active:scale-95"
           >
-            {t.back}
+            {backLabel}
           </Link>
 
           <div className="flex items-center gap-3">
@@ -513,6 +523,7 @@ export default function ProjectDetail() {
                   project={prevProject}
                   label={`← ${t.prev}`}
                   isFi={isFi}
+                  state={routerLocation.state}
                 />
               ) : (
                 <span />
@@ -523,6 +534,7 @@ export default function ProjectDetail() {
                   project={nextProject}
                   label={`${t.next} →`}
                   isFi={isFi}
+                  state={routerLocation.state}
                   align="right"
                   className="col-start-2"
                 />

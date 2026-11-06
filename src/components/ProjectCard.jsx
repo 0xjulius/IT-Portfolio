@@ -57,7 +57,11 @@ export default function ProjectCard({
 
         {/* TÄSSÄ UUSI LOGIIKKA: Jos hasArticle on true, kääritään kuva Link-komponenttiin */}
         {slug && hasArticle ? (
-          <Link to={`/blog/${slug}`} className="block cursor-pointer">
+          <Link
+            to={`/blog/${slug}`}
+            state={{ from: "/#projects" }}
+            className="block cursor-pointer"
+          >
             {ImageContent}
           </Link>
         ) : (
@@ -72,6 +76,7 @@ export default function ProjectCard({
         {slug && hasArticle && (
           <Link
             to={`/blog/${slug}`}
+            state={{ from: "/#projects" }}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-purple-700 hover:bg-purple-600 border border-purple-400 rounded-xl transition-all duration-200 shadow-md hover:shadow-purple-500/20 active:scale-95"
           >
             <svg
