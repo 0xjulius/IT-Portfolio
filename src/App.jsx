@@ -91,8 +91,8 @@ function PortfolioHome() {
     <>
       <Header />
       <Home />
-      <Technologies />
       <Navbar />
+      <Technologies />
       <main>
         <Studies />
         <Thesis />

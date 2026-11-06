@@ -1,3 +1,4 @@
+// src/components/Awards.jsx
 import React, { useState } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,10 +9,10 @@ const AwardCard = ({ image, title, issuedBy, desc }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="card m-2 sm:m-4 lg:m-10 p-4 sm:p-6 lg:p-8">
+    <div className="card w-full m-0 p-4 sm:p-6 lg:p-8">
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-3 cursor-pointer lg:cursor-default"
+        className="flex items-center justify-between gap-3 cursor-pointer"
       >
         <div className="flex items-center gap-3 sm:gap-6 min-w-0">
           <div className="w-14 h-14 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center bg-white/60 rounded-xl p-1 border border-gray-200/60 shadow-sm">
@@ -32,7 +33,7 @@ const AwardCard = ({ image, title, issuedBy, desc }) => {
             )}
           </div>
         </div>
-        <button className="lg:hidden p-2 text-md text-black/50 focus:outline-none shrink-0">
+        <button className="p-2 text-md text-black/50 focus:outline-none shrink-0">
           <FontAwesomeIcon
             icon={faChevronDown}
             className={`transform transition-transform duration-300 ${
@@ -44,9 +45,7 @@ const AwardCard = ({ image, title, issuedBy, desc }) => {
 
       <div
         className={`transition-all duration-300 overflow-hidden ${
-          isOpen
-            ? "max-h-[800px] opacity-100 mt-4"
-            : "max-h-0 opacity-0 lg:max-h-[800px] lg:opacity-100 lg:mt-4"
+          isOpen ? "max-h-[800px] opacity-100 mt-4" : "max-h-0 opacity-0"
         }`}
       >
         <div className="text-left pl-0 sm:pl-[112px] lg:pl-0">
@@ -63,10 +62,10 @@ const HonorCard = ({ image, title, link, issuedBy, desc, moreText }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="card m-2 sm:m-4 lg:m-10 p-4 sm:p-6 lg:p-8">
+    <div className="card w-full m-0 p-4 sm:p-6 lg:p-8">
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-3 cursor-pointer lg:cursor-default"
+        className="flex items-center justify-between gap-3 cursor-pointer"
       >
         <div className="flex items-center gap-3 sm:gap-6 min-w-0">
           <div className="w-14 h-14 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center bg-white/60 rounded-xl p-1 border border-gray-200/60 shadow-sm">
@@ -91,7 +90,7 @@ const HonorCard = ({ image, title, link, issuedBy, desc, moreText }) => {
             )}
           </div>
         </div>
-        <button className="lg:hidden p-2 text-md text-black/50 focus:outline-none shrink-0">
+        <button className="p-2 text-md text-black/50 focus:outline-none shrink-0">
           <FontAwesomeIcon
             icon={faChevronDown}
             className={`transform transition-transform duration-300 ${
@@ -103,9 +102,7 @@ const HonorCard = ({ image, title, link, issuedBy, desc, moreText }) => {
 
       <div
         className={`transition-all duration-300 overflow-hidden ${
-          isOpen
-            ? "max-h-[800px] opacity-100 mt-4"
-            : "max-h-0 opacity-0 lg:max-h-[800px] lg:opacity-100 lg:mt-4"
+          isOpen ? "max-h-[800px] opacity-100 mt-4" : "max-h-0 opacity-0"
         }`}
       >
         <div className="text-left pl-0 sm:pl-[112px] lg:pl-0 space-y-2">
@@ -135,36 +132,42 @@ const Awards = () => {
   const t = awardsContent[lang] || awardsContent.fi;
 
   return (
-    <section className="py-10" id="awards">
+    <section className="py-10 px-4 sm:px-6 max-w-7xl mx-auto" id="awards">
       <h1 className="text-2xl sm:text-[30px] lg:text-[36px] uppercase text-center font-bold text-gradient mb-6 sm:mb-8">
         {t.certificatesTitle}
       </h1>
 
-      {t.certificates.map((cert, index) => (
-        <AwardCard
-          key={index}
-          image={cert.image}
-          title={cert.title}
-          issuedBy={cert.issuedBy}
-          desc={cert.desc}
-        />
-      ))}
+      {/* Sertifikaatit */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-x-6 gap-y-4 sm:gap-y-6">
+        {t.certificates.map((cert, index) => (
+          <AwardCard
+            key={index}
+            image={cert.image}
+            title={cert.title}
+            issuedBy={cert.issuedBy}
+            desc={cert.desc}
+          />
+        ))}
+      </div>
 
       <h1 className="text-2xl sm:text-[30px] lg:text-[36px] uppercase text-center font-bold text-gradient mt-12 sm:mt-[100px] mb-6 sm:mb-8">
         {t.honorsTitle}
       </h1>
 
-      {t.honors.map((honor, index) => (
-        <HonorCard
-          key={index}
-          image={honor.image}
-          title={honor.title}
-          link={honor.link}
-          issuedBy={honor.issuedBy}
-          desc={honor.desc}
-          moreText={honor.moreText}
-        />
-      ))}
+      {/* Kunniamaininnat */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 items-start gap-y-4 sm:gap-y-6">
+        {t.honors.map((honor, index) => (
+          <HonorCard
+            key={index}
+            image={honor.image}
+            title={honor.title}
+            link={honor.link}
+            issuedBy={honor.issuedBy}
+            desc={honor.desc}
+            moreText={honor.moreText}
+          />
+        ))}
+      </div>
     </section>
   );
 };

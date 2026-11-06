@@ -48,7 +48,7 @@ export const projectsData = [
     descriptionEn:
       "A private, self-hosted AI agent running in Docker on Windows. Hermes Agent uses a local llm through LM Studio and is reachable via a password-protected web dashboard and a Telegram bot.",
     descriptionFi:
-      "Paikallinen, Dockerissa pyörivä itseisännöity tekoälyagentti. Hermes Agent käyttää paikallisia kielimalleja, ja sitä käytetään salasanasuojatun web-dashboardin ja Telegram-botin kautta.",
+      "Autonominen Dockerissa pyörivä itseisännöity tekoälyagentti. Hermes Agent käyttää paikallisia kielimalleja, ja sitä käytetään salasanasuojatun web-dashboardin ja Telegram-botin kautta.",
     github: "https://github.com/0xjulius/hermes-ai-agent-automation",
     live: "",
     badgeEn: "NEW!",
