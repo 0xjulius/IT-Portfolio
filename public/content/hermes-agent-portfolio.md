@@ -1,233 +1,302 @@
-# Itseisännöity tekoälyagentti: Hermes Agent + LM Studio + Telegram
-
-Rakensin Windows-koneelle itseisännöidyn tekoälyagentin. Agentti on
-[Hermes Agent](https://github.com/NousResearch/hermes-agent) (Nous Research),
-ja se pyörii Docker-kontissa. Ratkaisussa käytetään paikallista Gemma 4 12B -kielimallia (LM Studio), mutta kielimallit ovat myös vaihdettavissa nappia painamalla. Tämä arkkitehtuuri varmistaa, että kaikki data pysyy yksinomaan omassa hallinnassa ja tietoturvallisesti suljetussa ympäristössä.
-
-Agenttia käytetään kahden käyttöliittymän kautta: web-dashboardin ja Telegram-botin.
-
-Projektin aikana siirryin omatekoisesta imagesta virallisen imagen käyttöön,
-ratkaisin kontin pysyvän datan, dashboardin kirjautumisen ja agentin työkalujen
-oikeudet sekä kirjoitin käynnistysskriptin, joka pystyttää koko ympäristön
-yhdellä komennolla.
-
-
-![Projektin kuvakaappaus](/images/hermes/hermesagent.webp) 
-> Kuvakaappaus: Hermes-agentin logo.
-
-## Miksi Gemma?
-
-Google Gemma 4 12B -kielimalli on valittu järjestelmään sen erinomaisten teknisten ominaisuuksien ja paikallisen tehokkuuden vuoksi. Kuvassa näkyvien ja mallin arkkitehtuurin tarjoamien vahvuuksien ansiosta se soveltuu täydellisesti agenttiympäristöön:
-
-* **Erinomainen työkaluosaaminen (Tool Use):** Malli on koulutettu ja optimoitu nimenomaan työkalujen käyttöön (*”This model has been trained for tool use”*). Se osaa hyödyntää itsenäisesti erilaisia toimintoja, skriptejä ja ohjelmistorajapintoja poikkeuksellisen tarkasti.
-* **Optimoitu koko ja suorituskyky (12B):** Noin 12 miljardin parametrin koko tarjoaa täydellisen tasapainon älykkyyden ja keveyden välillä. Se pyörii sujuvasti paikallisessa laitteistossa (kuten LM Studiossa), mutta tarjoaa silti riittävästi päättelykykyä monimutkaisten tehtävien pilkkomiseen.
-* **Täydellinen tietosuvereenisuus:** Koska mallia ajetaan paikallisesti omassa ympäristössä, kaikki data ja tiedostot pysyvät täysin omassa hallinnassa ilman tietovuotoriskejä tai riippuvuutta ulkoisista pilvipalveluista.
-
-![Projektin kuvakaappaus](/images/hermes/tg-image-vision.png) 
-> Kuvakaappaus: Google Gemma 4 12B -kielimallin "Image Vision" ominaisuus tunnistaa myös kuvia lokaalisti, ja osaa päätellä tarkkaan mitä kuvassa on.
-
-## Motivaatio
-
-- **Yksityisyys ja hallinta:** henkilökohtainen agentti, jonka data ja mallit
-  pysyvät omalla koneella.
-- **Kustannukset:** paikallinen malli ei kuluta API-kutsuja.
-- **Oppiminen:** halusin ymmärtää, miten agenttiympäristö rakennetaan
-  turvallisesti: kontit, volumet, oikeudet, hyväksyntäkehotteet ja
-  viestikanavien kytkentä.
-- **Käytettävyys:** agentti tavoitettavissa myös puhelimesta Telegramin kautta.
-
-## Omaisuudet (projektin tuotokset)
-
-| Tuotos | Kuvaus |
-|---|---|
-| `start_hermes.ps1` | Käynnistysskripti: käynnistää Dockerin ja LM Studion, luo tai käynnistää Hermes-kontin, odottaa dashboardin ja avaa selaimen |
-| Docker-volume `hermes-data` | Pysyvä data (`/opt/data`): asetukset, muistit, skillit, sessiot, työtiedostot |
-| `SOUL.md` | Agentin persoona ja toimintaperiaatteet (tyyli, rehellisyys, turvallisuus) |
-| `AGENTS.md` | Ympäristön kuvaus ja säännöt agentille (tiedostosijainnit, rajoitukset) |
-| `hermes_dashboard.env` | Dashboardin kirjautumistiedot erillisessä tiedostossa (ei versionhallintaan) |
-| Telegram-botti | Agentin viestikanava puhelimeen, rajattu sallittuihin käyttäjiin |
-| Käyttö- ja vianetsintämuistiinpanot | Opitut asiat ja korjausohjeet (ks. Yhteenveto) |
-
-## Keskeiset käyttötapaukset
-
-### UC-1: Yksityinen henkilökohtainen avustaja Telegramissa
-
-**Ongelma:** Pilvipohjaiset avustajat vaativat keskustelujen ja tiedostojen
-lähettämistä kolmannelle osapuolelle, eikä niitä voi räätälöidä omiin
-tarpeisiin.
-
-**Ratkaisu:** Hermes pyörii omalla koneella paikallisen mallin varassa, ja
-Telegram-botti on yhdistetty siihen. Botti vastaa vain sallituille
-käyttäjätunnuksille. Agentin tyyli ja säännöt määritellään tiedostoissa
-`SOUL.md` ja `AGENTS.md`.
-
-**Hyöty:** Agentti tavoitettavissa mistä tahansa puhelimella, ja keskustelut
-sekä muisti pysyvät omassa hallinnassa. Tyyli ja toimintatavat ovat
-muokattavissa ilman kolmannen osapuolen rajoituksia.
-
-### UC-2: Valvottu tehtäväautomaatio eristetyssä ympäristössä
-
-**Ongelma:** Agentille on hyödyllistä antaa terminaalin käyttö (skriptien
-kirjoitus ja ajo, tiedostojen käsittely), mutta vapaa shell-pääsy omalle
-koneelle on riski.
-
-**Ratkaisu:** Agentti ajaa komennot Docker-kontin sisällä (terminal backend
-`local`). Windows-koneen tiedostoja ei ole liitetty konttiin eikä
-Docker-socketia ole annettu agentille. Työtiedostot kirjoitetaan
-työkansioon `workspace`, ja vaaralliset komennot (esim. `rm -rf`) pysäytetään
-Hermesin hyväksyntäkehotteella, ennen kuin ne ajetaan. Lisäksi agentti
-kysyy luvan ennen tiedostojen poistoa SOUL.md:n säännön mukaan.
-
-**Hyöty:** Agentti voi kirjoittaa ja ajaa koodia käytännössä (testattu:
-Python-skriptin luonti ja ajo), ja virhetilanteen vaikutus rajoittuu
-konttiin. Ihminen pysyy mukana vaarallisissa päätöksissä.
-
-### UC-3: Pysyvä muisti ja toistuvat tehtävät
-
-**Ongelma:** Tavallinen chat unohtaa kontekstin joka keskustelussa, eikä
-siitä ole apua toistuviin tehtäviin.
-
-**Ratkaisu:** Hermes tallentaa muistit, skillit ja sessiot volumeen
-(`/opt/data`), joten ne säilyvät, vaikka kontti poistettaisiin ja luotaisiin
-uudelleen. Agentti voi oppia toistuvia työtapoja skilleiksi ja hoitaa
-ajastettuja tehtäviä (esim. muistutukset) gatewayn kautta. Kontekstin
-kasvua hallitaan komennoilla `/usage`, `/compress` ja `/new`.
-
-**Hyöty:** Agentti muistaa mieltymykset ja työtavat sessioiden yli. Pitkän
-keskustelun kustannus pysyy hallinnassa, kun kontekstin kokoa seurataan.
-
-## Telegram-integraatio
-![Projektin kuvakaappaus](/images/hermes/tg.png) 
-> Kuvakaappaus: Telegram-botti.
-
-- Yhteys toteutettu Hermesin gateway-palvelun kautta (`gateway run`), joka
-  pitää Telegram-botin yhteyden auki kontin käynnissäoloajan.
-- Botti luotiin Telegramin BotFatherilla. Tunniste (token) ja sallittu
-  käyttäjä-ID tallennetaan Hermesin asetustiedostoon volumessa
-  (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_ALLOWED_USERS`). Ilman sallittua
-  käyttäjää botti hylkää kaikki viestit.
-- Telegramissa käytettävät komennot: `/new` (uusi sessio), `/usage`
-  (tokenit), `/compress` (konteksti), `/sessions`.
-- Opittu: kolmannen osapuolen neuvoissa esiintyneet asetusavaimet
-  (`plugins.telegram.*`) eivät olleet dokumentoituja. Oikea tapa vahvistettiin
-  Hermesin virallisesta dokumentaatiosta.
-
-## Arkkitehtuuri
-
-```
-  Puhelin ──Telegram──┐
-                      ▼
-               Telegram Bot API
-                      │ (ulos kontista)
- Windows-kone         ▼
- ┌─────────────────────────────────────────────────────────┐
- │  Docker-kontti: nousresearch/hermes-agent               │
- │   ┌──────────────┐   ┌─────────────┐   ┌─────────────┐  │
- │   │ Gateway      │   │ Dashboard   │   │ Agentti +   │  │
- │   │ (Telegram,   │   │ (web, auth) │   │ työkalut    │  │
- │   │  ajastukset) │   │ :9119       │   │ (terminal)  │  │
- │   └──────┬───────┘   └──────┬──────┘   └──────┬──────┘  │
- │          └──────────────────┴─────────────────┘         │
- │             Volume hermes-data  →  /opt/data            │
- └───────────┬─────────────────────────────────▲───────────┘
-             │ HTTP (host.docker.internal:1234) │
-             ▼                                  │
-      LM Studio (Gemma 4 12B, 64k konteksti)    │
-                                      Selain ───┘ 127.0.0.1:9119
-```
-
-## Teknologiat
-
-| Alue | Teknologia |
-|---|---|
-| Agentti | Hermes Agent (Nous Research) |
-| Kielimalli | Gemma 4 12B (GGUF Q4_K_M), LM Studio, OpenAI-yhteensopiva API |
-| Konttialusta | Docker Desktop (Windows), Docker-volumet |
-| Käyttöliittymät | Hermes web dashboard, Telegram Bot API |
-| Automaatio | PowerShell, LM Studio CLI (`lms`) |
-| Tiedostot | Markdown (`SOUL.md`, `AGENTS.md`), YAML-asetukset |
-
-## Asetukset
-
-| Asetus | Arvo / tarkoitus |
-|---|---|
-| Image | `nousresearch/hermes-agent` (virallinen) |
-| Käynnistys | `gateway run` + `HERMES_DASHBOARD=1`, `--restart unless-stopped` |
-| Pysyvä data | Named volume `hermes-data` → `/opt/data` |
-| Dashboard-portti | `127.0.0.1:9119` (julkaistu vain paikalliseen osoitteeseen) |
-| Dashboard-kirjautuminen | Basic auth (ympäristömuuttujat tiedostosta) |
-| Terminal backend | `local` (komennot ajetaan kontin sisällä) |
-| Työhakemisto | `terminal.cwd = /opt/data`, työtiedostot kansioon `workspace` |
-| Hyväksyntätila | `approvals.mode = manual` (varmista komennolla `hermes config`) |
-| LM Studio | Palvelin käynnistetty `lms server start`, konteksti 64 000, malli ladattu GPU:lle |
-| Malliyhteys | `host.docker.internal:1234/v1` kontista isäntäkoneelle |
-
-## Tietoturvaraja ja tuotantokäyttö
-
-**Nykyiset suojaukset**
-
-- Kontti on eristyskerros: ei Docker-socketia, ei isäntäkoneen kansioita.
-- Dashboard vaatii kirjautumisen ja on julkaistu vain osoitteeseen
-  `127.0.0.1`.
-- Telegram-botti vastaa vain sallituille käyttäjille.
-- Vaaralliset komennot vaativat hyväksynnän (`approvals.mode = manual`).
-- Salaisuudet pidetään erillisessä env-tiedostossa, ei skriptissä.
-
-**Tunnetut rajat**
-
-- Tekstimuotoiset säännöt (`SOUL.md`, `AGENTS.md`) ovat ohjeita, eivät
-  pakotteita. Pieni 12B-malli voi unohtaa niitä, joten kriittisiä päätöksiä ei
-  voi jättää pelkän tekstiohjeen varaan.
-- Agentti näkee kontin sisällä Hermesin asetukset ja `.env`-tiedoston, joten
-  API-avaimet ovat agentin luettavissa. `local`-backend ei suojaa niitä.
-- Jos LM Studio kuuntelee kaikissa verkkoliitännöissä, se on näkyvissä
-  lähiverkossa. Palomuurisääntö tai sidonta vain paikalliseen osoitteeseen on
-  syytä tarkistaa.
-- Aiemman Docker-backendin kokeilu osoitti, että konttiin ei voi antaa
-  Docker-socketia ilman, että agentille annetaan käytännössä oikeus koko
-  isäntäkoneeseen.
-
-**Tuotantokäyttöön tarvittaisiin**
-
-- Eristetty suoritusympäristö työkaluille (erillinen sandbox-backend tai
-  etäkone), jotta salaisuudet ja agentin komennot eivät jaa samaa konttia.
-- Salaisuuksien hallinta (secrets manager) ja avainten kierrätys.
-- TLS ja käänteinen välityspalvelin (reverse proxy), jos dashboard
-  altistetaan verkkoon; pidä dashboardin autentikointi päällä.
-- Kiinteä image-versio `latest`-tagin sijaan, päivitysprosessi ja
-  varmuuskopiot volumesta.
-- Lokien keruu, valvonta ja ulosmenevän liikenteen rajaus (egress-palomuuri).
-- Ei-root-käyttäjä ja vähimmät oikeudet.
-
-Nykyisessä muodossa ympäristö sopii henkilökohtaiseen käyttöön omalla
-koneella, ei monen käyttäjän tai julkiseen tuotantoon.
+# Itseisännöity tekoälyagentti: Hermes Agent, LM Studio, Docker ja Telegram
 
 ## Yhteenveto
 
-Projekti tuotti toimivan, paikallisen ja yksityisen tekoälyagentin, joka on
-käytettävissä sekä selaimesta että Telegramista. Ympäristö käynnistyy
-yhdellä skriptillä, ja pysyvä data säilyy kontin päivityksissä.
+Tässä projektissa rakennetaan Windows-koneelle itse hallittava tekoälyagentti, joka käyttää [Hermes Agentia](https://github.com/NousResearch/hermes-agent) (Nous Research), Docker Desktopia ja paikallisesti ajettavaa kielimallia LM Studion kautta. Agenttia voidaan käyttää Hermesin web-dashboardin kautta [2] sekä Telegram-botin välityksellä [10].
 
-**Keskeiset opit**
+Tavoitteena on yhdistää paikallisen mallin kustannus- ja hallintaedut agentin työkaluihin: komentojen suorittamiseen, tiedostojen käsittelyyn, toistuviin tehtäviin ja keskustelumuistiin. Samalla ympäristö pyritään pitämään rajattuna niin, ettei agentilla ole tarpeettomia oikeuksia Windows-isäntäkoneeseen.
 
-1. **Pysyvyys:** kontin sisälle `pip`illä tehdyt asennukset katoavat
-   kontin uudelleenluonnissa. Pysyvä data kuuluu volumeen.
-2. **Virallinen image voitti oman:** oma image, jossa paketti oli asennettu
-   PyPI:sta, ei sisältänyt dashboardin vaatimia moduuleja. Virallinen image
-   ratkaisi ongelman kerralla.
-3. **Backend ja oikeudet:** Docker-backend ei toimi, jos agentti itse
-   pyörii kontissa ilman Docker-socketia. `local`-backend kontin sisällä on
-   käytännöllinen kompromissi.
-4. **Työhakemisto vaikuttaa löydettävyyteen:** liian kapea `terminal.cwd`
-   sai agentin etsimään vain yhdestä kansiosta. Työhakemisto juureen ja
-   uusien tiedostojen sääntö omaan kansioonsa toimi paremmin.
-5. **Tarkista lähteet:** konfiguraatioavaimet ja komennot kannattaa
-   varmistaa virallisesta dokumentaatiosta eikä luottaa yksittäisen
-   avustajan ehdotuksiin.
-6. **Turvallisuus kerroksina:** eristys, hyväksyntäkehote, käyttäjärajaus
-   ja tekstisäännöt täydentävät toisiaan, eikä yksikään niistä yksin riitä.
+**Tärkeä rajaus:** paikallisesti ajettava kielimalli ei yksin takaa, että kaikki liikenne tai kaikki tiedot pysyvät paikallisina. Telegramin käyttö välittää viestejä Telegramin palveluiden kautta, ja erikseen käyttöön otetut verkkotyökalut tai ulkoiset API-palvelut voivat lähettää niille annettua sisältöä kolmansille osapuolille. Tietosuojan taso riippuu koko kokoonpanosta, ei pelkästään mallin sijainnista [7]. Telegramin viestiliikenne kulkee Telegramin palveluiden kautta [10].
 
-**Jatkokehitys:** erillinen sandbox työkaluille, kiinteä imageversio ja
-automaattinen varmuuskopiointi, tarkemmat Telegram-käyttötapaukset
-(ajastetut raportit, tiedostojen käsittely) sekä mallin ja kontekstin
-koon hienosäätö.
+![Projektin kuvakaappaus](/images/hermes/hermesagent.webp)
+
+*Kuvakaappaus: Hermes-agentin logo.*
+
+## Projektin tavoitteet
+
+Projektissa tavoitellaan neljää asiaa:
+
+- **Hallinta:** agentti ja sen asetukset ovat omassa ylläpidossa.
+- **Paikallinen päättely:** kielimalli ajetaan LM Studiossa omalla koneella.
+- **Työkalujen käyttö:** agentti voi tehdä konkreettisia toimia, kun tarvittavat työkalut on otettu käyttöön ja konfiguroitu.
+- **Rajattu käyttöoikeus:** agentille annetaan vain tehtävien kannalta tarpeelliset tiedosto- ja suoritusympäristön oikeudet.
+
+Hermes Agent tukee useita käyttöliittymiä, työkaluryhmiä, muistitoimintoja, taitoja (*skills*) ja ajastettuja tehtäviä [2]. Kaikki ominaisuudet eivät kuitenkaan aktivoidu automaattisesti pelkällä perusasennuksella; työkalut, taustapalvelut, mallin kyvykkyydet ja asetukset vaikuttavat siihen, mitä agentti pystyy tekemään [4].
+
+## Arkkitehtuuri
+
+Ratkaisussa on neljä keskeistä osaa:
+
+1. **Hermes Agent** käsittelee keskustelun, valitsee työkalut ja koordinoi tehtävän suorittamista.
+2. **LM Studio** tarjoaa paikallisen mallin HTTP-rajapinnan kautta.
+3. **Docker Desktop** ajaa Hermes Gatewayn eristetyssä kontissa ja säilyttää määritellyn datan Docker-volumessa.
+4. **Web-dashboard ja Telegram** tarjoavat käyttöliittymät agentille.
+
+```text
+Puhelin ── Telegram ── Telegram Bot API
+                         │
+                         ▼
+Windows-kone       Docker-kontti: Hermes Agent
+┌──────────────────────────────────────────────────────────┐
+│ Gateway ── Dashboard ── Agentti ja työkalut              │
+│                         │                                │
+│                         └── terminal / file / muut       │
+│                                                          │
+│ Docker-volume: hermes-data → /opt/data                   │
+└─────────────────────────────┬────────────────────────────┘
+                              │ HTTP API
+                              ▼
+                 LM Studio Windowsissa
+                 http://host.docker.internal:1234/v1
+```
+
+Kuvio esittää tavoiteltua loogista rakennetta. Terminal-työkalun todellinen suorituspaikka määräytyy erikseen määritetystä `terminal.backend`-asetuksesta. Hermesin ajaminen Docker-kontissa ja Hermeksen komentojen ajaminen erillisessä Docker-sandboxissa ovat kaksi eri asiaa [4].
+
+## Miksi paikallinen kielimalli?
+
+Paikallisen mallin käyttö voi vähentää riippuvuutta maksullisista mallirajapinnoista ja pitää varsinaiset mallipäättelyn pyynnöt omalla koneella. Se mahdollistaa myös mallien vaihtamisen LM Studion kautta laitteiston ja tehtävän mukaan [7].
+
+Paikallisuudella on kuitenkin rajansa:
+
+- Mallin lataaminen ja ajaminen vaatii riittävästi RAM-muistia ja/tai GPU-muistia.
+- Mallin suorituskyky riippuu malliversiosta, kvantisoinnista, laitteistosta ja asetuksista.
+- Mallin kyky kutsua työkaluja riippuu sekä mallin koulutuksesta että siitä, miten agentti ja mallipalvelin välittävät työkalukutsut.
+- Paikallinen malli ei itsessään takaa, että Hermesin terminaali, selain, Telegram tai muut integraatiot toimivat.
+- Jos agentille otetaan käyttöön ulkoisia palveluita, niiden käyttö voi aiheuttaa kustannuksia ja tietojen siirtymistä palveluntarjoajille.
+
+Tässä kokoonpanossa käytetään Gemma 4 12B -mallia LM Studion kautta [7]. Gemma-mallien ominaisuudet ja mallikohtaiset tiedot löytyvät Googlen dokumentaatiosta [8]. Mallin tarkka tunniste tulee tarkistaa LM Studion `/v1/models`-rajapinnasta ja valita Hermesin asetuksiin vasta tämän perusteella. Mallin nimi tai koko ei yksin takaa agenttitehtävien onnistumista; työkalujen käyttö pitää testata käytännössä.
+
+![Kuvakaappaus: mallin kuvankäsittelyominaisuus](/images/hermes/tg-image-vision.png)
+
+*Kuvakaappaus: esimerkki paikallisen mallin kuvasyötteestä. Kuvan ymmärtämisen tuki ja laatu riippuvat käytetystä mallista ja LM Studion asetuksista.*
+
+## Miksi Hermes Agent?
+
+Hermes on agenttikehys, ei pelkkä keskustelumalli. Sen tehtävänä on ohjata mallin ja työkalujen välistä vuorovaikutusta. Hermesin dokumentaatiossa kuvataan muun muassa:
+
+- terminaalin ja koodin suorittamisen työkalut
+- tiedostojen käsittely ja työskentelyhakemisto
+- muistitoiminnot ja keskusteluhistoria
+- uudelleenkäytettävät taidot (*skills*)
+- gateway useille viestikanaville
+- ajastetut tehtävät ja alitehtävien delegointi.
+
+Ominaisuudet ovat riippuvaisia käytössä olevasta Hermes-versiosta, määrityksistä, käyttöliittymästä ja työkalujen saatavuudesta [4]. Agentin vastaus, jossa se kertoo komennon mutta ei suorita sitä, ei osoita terminaalityökalun toimivuutta. Työkalun suoritus on testattava todellisella komennolla ja sen tulosteella.
+
+## Docker: kaksi eri käyttötapaa
+
+Hermeksen Docker-dokumentaatio erottaa toisistaan kaksi asetelmaa [3]. Terminal-backendien yksityiskohdat kuvataan asetusten dokumentaatiossa [4]:
+
+### 1. Hermes itse ajetaan Dockerissa
+
+Tässä projektissa `nousresearch/hermes-agent`-image käynnistää Gatewayn. Skripti liittää pysyvän volumen konttiin:
+
+```powershell
+-v "${VOLUME}:/opt/data"
+```
+
+Tämä säilyttää Hermeksen asetukset ja muut `/opt/data`-hakemistoon tallennetut tiedot kontin uudelleenluonnin yhteydessä [3]. Se ei kuitenkaan automaattisesti ota käyttöön agentin Terminal-työkalua eikä anna sille pääsyä Dockerin hallintaan.
+
+### 2. Hermes suorittaa tehtävät erillisessä Docker-sandboxissa
+
+Hermesin `terminal.backend: docker` tarkoittaa erillistä suoritusympäristöä, jossa terminal-, file- ja koodinsuorituskutsut voidaan suorittaa [4]. Tämä on eri asia kuin Gateway-kontti. Docker-backend tarvitsee toimivan Docker- tai Podman-komennon Hermeksen käytettäväksi ja sen asetukset pitää tarkistaa.
+
+### 3. Local-backend kontissa
+
+`terminal.backend: local` suorittaa komennot siinä käyttöympäristössä, jossa Hermes-prosessi toimii [4]. Kun Hermes itse pyörii Docker-kontissa, `local` tarkoittaa käytännössä kyseisen kontin ympäristöä — ei suoraan Windowsin PowerShelliä.
+
+Tämä voi olla yksinkertainen tapa testata komentojen suorittamista, mutta se ei ole sama eristystaso kuin erillinen Docker-sandbox. Lisäksi agentin käytössä olevat tiedostot ja salaisuudet on huomioitava: jos ne ovat saman kontin sisällä ja luettavissa, local-backend ei suojaa niitä agentin suorittamilta komennoilta.
+
+## Käytetty käynnistysratkaisu
+
+Projektissa käytetään PowerShell-skriptiä `start_hermes.ps1`, joka:
+
+1. tarkistaa Docker CLI:n ja Docker Enginen toiminnan
+2. käynnistää Docker Desktopin tarvittaessa
+3. tarkistaa LM Studion API:n ja listaa saatavilla olevat mallit
+4. luo Docker-volumen `hermes-data`, jos sitä ei vielä ole
+5. luo tai käynnistää Hermes-kontin
+6. odottaa dashboardin vastausta ja avaa selaimen.
+
+Keskeiset muuttujat:
+
+| Asetus | Arvo / tarkoitus |
+|---|---|
+| Docker image | `nousresearch/hermes-agent:latest` |
+| Kontin nimi | `hermes` |
+| Pysyvä volume | `hermes-data` → `/opt/data` |
+| Dashboard | `127.0.0.1:9119` |
+| LM Studio Windowsissa | `127.0.0.1:1234` |
+| LM Studio kontista | `http://host.docker.internal:1234/v1` |
+| Käynnistys | `gateway run` |
+| Dashboardin aktivointi | `HERMES_DASHBOARD=1` |
+
+Dashboardin julkaiseminen osoitteeseen `127.0.0.1` rajoittaa portin isäntäkoneen paikalliseen loopback-osoitteeseen. Tämä on hyvä oletus henkilökohtaiseen käyttöön, mutta se ei korvaa autentikointia eikä muiden verkkoasetusten tarkistamista.
+
+## Pysyvä data ja projektitiedostot
+
+Projektissa käytetään Docker named volumea `hermes-data`, joka liitetään polkuun `/opt/data` [3]. Hermeksen Docker-dokumentaation mukaan tämä hakemisto toimii konttiasennuksen pysyvän tilan sijaintina. Siellä voidaan säilyttää esimerkiksi:
+
+- `config.yaml`: Hermesin asetukset
+- `.env`: API-avaimet ja muut salaisuudet
+- `SOUL.md`: agentin persoonaa ja toimintatapoja kuvaavat ohjeet
+- keskustelusessiot ja muistit
+- asennetut taidot ja muut Hermesin tiedot.
+
+Projektissa käytetään lisäksi omia dokumentteja:
+
+| Tiedosto tai resurssi | Käyttötarkoitus |
+|---|---|
+| `start_hermes.ps1` | Käynnistää ja tarkistaa ympäristön |
+| Docker-volume `hermes-data` | Säilyttää Hermeksen pysyvän tilan |
+| `SOUL.md` | Kuvaa agentin tyyliä, toimintaperiaatteita ja rajoja |
+| `AGENTS.md` | Kuvaa ympäristön ja projektin työskentelysäännöt |
+| `hermes_dashboard.env` | Dashboardin tunnistetiedot, ei versionhallintaan |
+| Telegram-botti | Agentin käyttö puhelimesta |
+| Vianetsintämuistiinpanot | Kirjaa tehdyt muutokset ja tunnetut ongelmat |
+
+Ohjetiedostot, kuten `SOUL.md` ja `AGENTS.md`, ohjaavat mallin käyttäytymistä, mutta eivät yksin muodosta teknistä turvarajaa. Niiden lisäksi tarvitaan käyttöoikeuksien, verkon ja suoritusympäristön rajoituksia.
+
+## Terminal-työkalun käyttöönotto ja testaus
+
+Hermeksen työkalut eivät välttämättä ole kaikki käytössä asennuksen jälkeen. Ennen kuin agentilta odotetaan tiedostojen muokkaamista tai koodin ajamista, pitää varmistaa seuraavat asiat:
+
+1. Terminal-työkaluryhmä on käytössä Hermesin työkaluasetuksissa.
+2. `terminal.backend` on valittu ja backendin edellytykset täyttyvät.
+3. Malli ja Hermes käsittelevät työkalukutsut oikein.
+4. Agentti pystyy suorittamaan komennon ja palauttamaan sen todellisen tulosteen.
+5. Työhakemisto on oikea ja kirjoitusoikeudet riittävät.
+
+Perustesti on pyytää agenttia suorittamaan `pwd` ja `date` sekä näyttämään komentojen tulosteet. Pelkkä vastaus, jossa agentti kertoo komennon nimen mutta sanoo, ettei sillä ole terminaalia, ei ole onnistunut suoritus.
+
+### Backend-valinta tässä projektissa
+
+Tässä ympäristössä on valittava tietoisesti kahden vaihtoehdon välillä:
+
+- **`local`:** komennot suoritetaan Hermes Gateway -kontin sisällä. Tämä voi olla helpompi ottaa käyttöön, mutta agentin on tällöin mahdollista lukea ja muokata kaikkea, mihin sen prosessilla on kontin sisällä oikeudet.
+- **`docker`:** Hermes käynnistää erillisen sandbox-kontin komentoja varten. Tämä tarjoaa paremman eristyksen, mutta vaatii, että Docker-komento on Hermeksen käytettävissä.
+
+Projektin käynnistysskripti ei liitä Docker-socketia Gateway-konttiin. Dockerin ja Terminal-backendin asetusten ero kuvataan Hermesin dokumentaatiossa [4]. Tämä vähentää riskiä, että agentti voisi hallita isäntäkoneen Dockeria. Samalla se tarkoittaa, ettei erillinen Docker-backend välttämättä toimi ennen kuin sen tarvitsema Docker-yhteys on ratkaistu turvallisesti.
+
+Docker-socketin liittäminen ei ole harmiton korjaus: Dockerin hallintaoikeus voi käytännössä antaa laajat oikeudet isäntäkoneeseen [9]. Siksi sitä ei pidä lisätä vain siksi, että Terminal saataisiin toimimaan.
+
+
+## Telegram-integraatio
+
+![Projektin kuvakaappaus](/images/hermes/tg.png) 
+> Kuvakaappaus: Telegram-botti.
+
+Telegramin Bot API mahdollistaa botin kautta viestittelyn [10]. Hermes Gateway ylläpitää viestikanavan yhteyttä ja välittää viestit agentille.
+
+Projektin asetuksissa Telegram-botin token ja sallittujen käyttäjien tunnisteet määritetään Hermesin dokumentoiman konfiguraation mukaisesti. Token on salaisuus, eikä sitä pidä tallentaa julkiseen Git-repositorioon tai liittää kuvakaappauksiin.
+
+Telegramin Bot API:n käytöstä seuraa, että viestit välitetään Telegramin palveluiden kautta [10]. Käytännössä huomioitavaa:
+
+- Telegramin kautta lähetetyt viestit kulkevat Telegramin palveluiden kautta.
+- Käyttäjien sallittujen tunnisteiden rajaaminen vähentää riskiä, että muut voivat käyttää bottia.
+- Käyttäjärajaus pitää testata toisella, kielletyllä käyttäjällä tai muuten varmistaa asetuksista.
+- Viestikanavan turvallisuus ei automaattisesti suojaa agentin työkaluja tai tiedostoja.
+
+## Tietoturva ja yksityisyys
+
+Ympäristöä suunniteltaessa on erotettava toisistaan mallin paikallisuus, agentin oikeudet ja viestikanavien tietovirrat.
+
+### Käytössä olevat suojaukset
+
+- Hermes ajetaan Docker-kontissa.
+- Dashboard-portti julkaistaan vain osoitteeseen `127.0.0.1:9119`.
+- Docker-socketia ei liitetä Hermes Gateway -konttiin.
+- Pysyvä data tallennetaan nimettyyn volumeen.
+- Telegram-botti on tarkoitus rajata sallittuihin käyttäjiin.
+- Salaisuudet pyritään pitämään erillisissä asetustiedostoissa, joita ei lisätä versionhallintaan.
+
+### Riskit ja rajoitukset
+
+- **Paikallinen malli ei tarkoita, että kaikki liikenne on paikallista.** Telegram ja ulkoiset verkkopalvelut ovat edelleen kolmansia osapuolia.
+- **`local`-terminal-backend ei ole erillinen sandbox.** Kontin sisällä käytettävissä olevat tiedostot ja salaisuudet voivat olla komentojen saavutettavissa.
+- **Ohjetiedostot eivät ole teknisiä käyttöoikeusrajoja.** Pienempi tai työkalukäyttöön heikommin soveltuva malli voi tulkita ohjeita väärin.
+- **LM Studion verkko-osoite pitää rajata harkiten.** Jos palvelin kuuntelee kaikissa verkkoliitännöissä, lähiverkon saavutettavuus riippuu myös palomuurista ja muista asetuksista.
+- **Dashboardin autentikointi pitää varmistaa.** Paikallinen porttisidonta pienentää altistusta mutta ei yksin korvaa kirjautumissuojausta.
+- **`latest`-image voi muuttua päivitysten yhteydessä.** Toistettavuutta parantaa version tai imagetunnisteen lukitseminen ja varmuuskopiointi ennen päivitystä.
+- **Varmuuskopioi volume.** Pysyvä volume suojaa kontin poistumiselta, mutta ei itsessään suojaa vahingossa tapahtuvalta poistamiselta tai levyrikolta.
+
+### Tuotantokäyttöön suositeltavat parannukset
+
+Jos ympäristöä käytetään tärkeisiin tietoihin tai usean käyttäjän palveluna, harkitse ainakin:
+
+- erillistä sandboxia agentin komentoja varten
+- vähimmän oikeuden periaatetta ja tarvittaessa ei-root-käyttäjää
+- API-avainten erottamista agentin työskentelytilasta
+- verkon ulosmenevän liikenteen rajaamista
+- kiinteää image-versiota, päivityssuunnitelmaa ja varmuuskopioita
+- lokien seurantaa ja palautumistestausta
+- dashboardin vahvaa autentikointia sekä TLS:ää, jos käyttö avataan paikallisen koneen ulkopuolelle.
+
+Nykyinen ratkaisu on henkilökohtaiseen kokeiluun sopiva lähtökohta, mutta sitä ei pidä kuvata automaattisesti riskittömäksi tai täysin suljetuksi ympäristöksi.
+
+## Ongelmat ja opit
+
+Projektin tärkeimmät käytännön opit ovat:
+
+1. **Virallinen image vähensi yhteensopivuusongelmia.** Aiempi oma image, jossa paketti asennettiin PyPI:sta, ei sisältänyt dashboardin vaatimia moduuleja. Viralliseen imageen siirtyminen ratkaisi tämän ongelman.
+2. **Gateway-kontti ja Terminal-backend ovat eri asioita.** Hermes voi toimia Dockerissa, vaikka Terminal-työkalun suoritusympäristö olisi määrittämättä tai toimimaton.
+3. **Backend ja oikeudet on suunniteltava yhdessä.** Erillinen Docker-backend tarvitsee Docker-yhteyden; `local` suorittaa komennot nykyisessä Hermes-ympäristössä.
+4. **Pysyvä data kuuluu volumeen.** Kontin sisään asennetut paketit tai muut muutokset eivät välttämättä säily kontin uudelleenluonnissa, ellei niitä tallenneta pysyvään sijaintiin tai sisällytetä imageen.
+5. **Työhakemisto vaikuttaa tiedostojen löytymiseen.** `terminal.cwd` ja käytössä oleva backend määrittävät, mistä suhteellisia polkuja tulkitaan.
+6. **Mallin työkalukyky pitää testata käytännössä.** Mallin koko tai maininta työkalutuesta ei takaa onnistunutta työkalukutsua.
+7. **Turvallisuus muodostuu useasta kerroksesta.** Konttieristys, käyttöoikeudet, käyttäjärajaukset, salaisuuksien käsittely ja hyväksyntämenettelyt täydentävät toisiaan.
+
+## Ensimmäiset testit
+
+Ennen kuin agentille annetaan laajoja tehtäviä, testaa yksi ominaisuus kerrallaan:
+
+1. **Terminal:** pyydä agenttia suorittamaan `pwd` ja `date` ja palauttamaan tulosteet.
+2. **Tiedostot:** luo `workspace/hello.txt`, kirjoita siihen lyhyt teksti ja lue tiedosto takaisin.
+3. **Koodi:** kirjoita Python-ohjelma, suorita se ja tarkista tulos.
+4. **Verkkohaku:** pyydä hakemaan virallinen lähde ja tarkista, että käytössä on oikea hakutyökalu.
+5. **Muisti:** tallenna testitieto ja tarkista myöhemmin, säilyykö se uuden session jälkeen.
+6. **Turvallisuus:** varmista, että agentti ei pääse Windowsin tiedostoihin, joita sille ei ole tarkoituksella jaettu.
+
+Testituloksissa erotetaan aina toisistaan agentin ilmoitus ja todennettu suoritus. Jos agentti sanoo luoneensa tiedoston, varmista tiedoston olemassaolo ja sisältö.
+
+## Yhteenveto
+
+Projektissa yhdistyvät Hermes Agent, paikallinen LM Studio -mallipalvelu, Docker Desktop sekä web- ja Telegram-käyttöliittymät. Ratkaisu tarjoaa hyvän oppimisympäristön agenttien työkalujen, pysyvän tilan, mallipalvelun ja tietoturvarajojen ymmärtämiseen.
+
+Tärkein tekninen havainto on, että **Hermes Gatewayn ajaminen Dockerissa ei automaattisesti ota käyttöön erillistä komentojen suoritusympäristöä**. Terminal-backend pitää valita, sen edellytykset pitää täyttää ja työkalun toiminta todentaa käytännön testillä.
+
+Paikallinen kielimalli voi vähentää ulkoisten mallirajapintojen tarvetta, mutta tietosuojan ja turvallisuuden arvioinnissa on huomioitava myös Telegram, verkkotyökalut, salaisuudet, tiedostojen käyttöoikeudet ja komentojen suoritusympäristö.
+
+## Lähteet
+
+Alla olevat lähteet ovat ensisijaisesti valmistajien ja projektien virallista dokumentaatiota. Ominaisuudet ja asetukset voivat muuttua, joten tarkista oman asennetun Hermes-version dokumentaatio ennen tuotantokäyttöä.
+
+[1] **Nous Research — Hermes Agent, lähdekoodi ja projektin yleiskuvaus**  
+   https://github.com/NousResearch/hermes-agent
+
+[2] **Hermes Agent — virallinen dokumentaatio**  
+   https://hermes-agent.nousresearch.com/docs/
+
+[3] **Hermes Agent — Docker-asennus ja Gateway-kontti**  
+   https://hermes-agent.nousresearch.com/docs/user-guide/docker
+
+[4] **Hermes Agent — asetukset ja Terminal-backendit**  
+   https://hermes-agent.nousresearch.com/docs/user-guide/configuration
+
+[5] **Hermes Agent — pika-aloitus ja työkalujen käyttöönotto**  
+   https://hermes-agent.nousresearch.com/docs/getting-started/quickstart/
+
+[6] **Hermes Agent — ympäristömuuttujien viite**  
+   https://hermes-agent.nousresearch.com/docs/reference/environment-variables
+
+[7] **LM Studio — virallinen dokumentaatio**  
+   https://lmstudio.ai/docs
+
+[8] **Google AI for Developers — Gemma-mallien dokumentaatio**  
+   https://ai.google.dev/gemma/docs
+
+[9] **Docker — Docker Desktopin dokumentaatio**  
+   https://docs.docker.com/desktop/
+
+[10] **Telegram — Bot API**  
+    https://core.telegram.org/bots/api
