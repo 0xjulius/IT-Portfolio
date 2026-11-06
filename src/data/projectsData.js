@@ -30,7 +30,7 @@ export const projectsData = [
     slug: "hermes-agent-portfolio",
     hasArticle: true,
     publishedAt: "2026-11-05",
-    updatedAt: "2026-11-05",
+    updatedAt: "2026-11-06",
     tags: [
       "AI Agent",
       "Hugging Face",
@@ -49,7 +49,7 @@ export const projectsData = [
       "A private, self-hosted AI agent running in Docker on Windows. Hermes Agent uses a local llm through LM Studio and is reachable via a password-protected web dashboard and a Telegram bot.",
     descriptionFi:
       "Paikallinen, Dockerissa pyörivä itseisännöity tekoälyagentti. Hermes Agent käyttää paikallisia kielimalleja, ja sitä käytetään salasanasuojatun web-dashboardin ja Telegram-botin kautta.",
-    github: "",
+    github: "https://github.com/0xjulius/hermes-ai-agent-automation",
     live: "",
     badgeEn: "NEW!",
     badgeFi: "UUSI!",
