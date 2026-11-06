@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { projects } from "../data/projectsData";
 import { useLanguage } from "../context/LanguageContext";
+import AuthorBio from "../components/AuthorBio";
 
 const AUTHOR = "Julius Aalto";
 const AUTHOR_AVATAR = "/images/pfp.png"; // public/images/pfp.png
@@ -511,6 +512,8 @@ export default function ProjectDetail() {
               </ReactMarkdown>
             </article>
           )}
+          {/* Kirjoittajan esittelylaatikko */}
+          <AuthorBio />
 
           {/* Edellinen / seuraava projekti */}
           {(prevProject || nextProject) && (
