@@ -3,7 +3,9 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
   useLocation,
+  useParams,
 } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -24,6 +26,7 @@ import ProjectsNew from "./components/ProjectsNew.jsx";
 import GitHubHeatmap from "./components/GitHubHeatmap.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import VantaBackground from "./components/VantaBackground.jsx";
+import BlogIndex from "./pages/BlogIndex.jsx";
 
 // Komponentti, joka nollaa vierityksen AINA kun URL-reitti (pathname) muuttuu
 function ScrollToTop() {
@@ -34,6 +37,12 @@ function ScrollToTop() {
   }, [pathname]);
 
   return null;
+}
+
+// Ohjaa vanhat /projects/<slug>-linkit uuteen /blog/<slug>-osoitteeseen
+function RedirectToBlog() {
+  const { slug } = useParams();
+  return <Navigate to={`/blog/${slug}`} replace />;
 }
 
 // Group your main portfolio sections into a single page component
@@ -83,7 +92,15 @@ function App() {
 
         <Routes>
           <Route path="/" element={<PortfolioHome />} />
-          <Route path="/projects/:slug" element={<ProjectDetail />} />
+          <Route path="/blog" element={<BlogIndex />} />
+          <Route path="/blog/:slug" element={<ProjectDetail />} />
+
+          {/* Vanhat osoitteet ohjataan uusiin */}
+          <Route path="/projects/:slug" element={<RedirectToBlog />} />
+          <Route
+            path="/projects"
+            element={<Navigate to="/#projects" replace />}
+          />
         </Routes>
 
         <ScrollToTopButton />

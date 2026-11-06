@@ -10,7 +10,7 @@ const AUTHOR = "Julius Aalto";
 const AUTHOR_AVATAR = "/images/pfp.png"; // public/images/pfp.png
 // Polku, jolla projektisivut avautuvat reitityksessäsi (esim. /projects/:slug).
 // Muuta tämä, jos reittisi on eri.
-const PROJECT_ROUTE_BASE = "/projects";
+const PROJECT_ROUTE_BASE = "/blog";
 
 // Käännökset yhdessä paikassa
 const T = {
@@ -60,6 +60,59 @@ const slugify = (text) =>
 // Valitsee projektin otsikon kielen mukaan
 const getTitle = (p, isFi) =>
   p ? (isFi && p.titleFi ? p.titleFi : p.titleEn || p.title) : "";
+
+// Edellinen/seuraava-kortti: projektin kuva taustana, alaosa blurrattu ja tummennettu
+// jotta teksti on helppo lukea kuvasta riippumatta.
+function ProjectNavCard({
+  project,
+  label,
+  isFi,
+  align = "left",
+  className = "",
+}) {
+  const isRight = align === "right";
+
+  return (
+    <Link
+      to={`${PROJECT_ROUTE_BASE}/${project.slug}`}
+      className={`group relative block h-44 sm:h-48 overflow-hidden rounded-xl border border-slate-200 bg-slate-800 shadow-sm transition-all duration-300 hover:border-purple-300 hover:shadow-lg ${className}`}
+    >
+      {project.image && (
+        <img
+          src={project.image}
+          alt=""
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+        />
+      )}
+
+      {/* Blurri alaosaan, häivytetään maskilla ylöspäin */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-3/4 backdrop-blur-md"
+        style={{
+          WebkitMaskImage:
+            "linear-gradient(to top, black 30%, transparent 100%)",
+          maskImage: "linear-gradient(to top, black 30%, transparent 100%)",
+        }}
+      />
+      {/* Tumma häivytys tekstin luettavuutta varten */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-slate-900/85 via-slate-900/50 to-transparent" />
+
+      <div
+        className={`absolute inset-x-0 bottom-0 p-3 sm:p-4 ${
+          isRight ? "text-right" : "text-left"
+        }`}
+      >
+        <span className="block text-[10px] sm:text-xs font-semibold uppercase tracking-normal sm:tracking-wide text-slate-200">
+          {label}
+        </span>
+        <span className="mt-1 text-sm sm:text-base font-bold leading-snug text-white [text-shadow:0_1px_6px_rgba(0,0,0,0.5)] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3] overflow-hidden transition-colors group-hover:text-purple-200">
+          {getTitle(project, isFi)}
+        </span>
+      </div>
+    </Link>
+  );
+}
 
 export default function ProjectDetail() {
   const { slug } = useParams();
@@ -283,7 +336,7 @@ export default function ProjectDetail() {
         >
           <Link
             to="/#projects"
-            className="text-purple-700 hover:text-purple-600 font-bold text-sm inline-flex items-center gap-1 transition-colors"
+            className="inline-flex items-center gap-1 px-4 py-2 text-sm font-bold text-sky-800 bg-sky-100 hover:bg-sky-200 border border-sky-200 rounded-xl transition-all duration-200 active:scale-95"
           >
             {t.back}
           </Link>
@@ -453,36 +506,26 @@ export default function ProjectDetail() {
           {(prevProject || nextProject) && (
             <nav
               aria-label={isFi ? "Muut projektit" : "More projects"}
-              className="mt-16 pt-8 border-t border-slate-200 grid gap-4 sm:grid-cols-2"
+              className="mt-16 pt-8 border-t border-slate-200 grid grid-cols-2 gap-3 sm:gap-4"
             >
               {prevProject ? (
-                <Link
-                  to={`${PROJECT_ROUTE_BASE}/${prevProject.slug}`}
-                  className="group rounded-xl border border-slate-200 p-4 hover:border-purple-300 hover:bg-slate-50 transition-colors"
-                >
-                  <span className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    ← {t.prev}
-                  </span>
-                  <span className="block mt-1 font-bold text-slate-900 group-hover:text-purple-700">
-                    {getTitle(prevProject, isFi)}
-                  </span>
-                </Link>
+                <ProjectNavCard
+                  project={prevProject}
+                  label={`← ${t.prev}`}
+                  isFi={isFi}
+                />
               ) : (
                 <span />
               )}
 
               {nextProject && (
-                <Link
-                  to={`${PROJECT_ROUTE_BASE}/${nextProject.slug}`}
-                  className="group rounded-xl border border-slate-200 p-4 text-right hover:border-purple-300 hover:bg-slate-50 transition-colors sm:col-start-2"
-                >
-                  <span className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    {t.next} →
-                  </span>
-                  <span className="block mt-1 font-bold text-slate-900 group-hover:text-purple-700">
-                    {getTitle(nextProject, isFi)}
-                  </span>
-                </Link>
+                <ProjectNavCard
+                  project={nextProject}
+                  label={`${t.next} →`}
+                  isFi={isFi}
+                  align="right"
+                  className="col-start-2"
+                />
               )}
             </nav>
           )}
