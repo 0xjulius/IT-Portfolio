@@ -113,13 +113,17 @@ export default function BlogIndex() {
     <div className="min-h-screen w-full bg-white text-slate-900">
       <main className="w-full border-y border-slate-200 bg-white px-4 sm:px-8 py-10 md:py-14">
         <div className="max-w-6xl mx-auto">
-          <nav className="mb-8 pb-4 border-b border-slate-200">
+          <nav className="flex items-center justify-between mb-8 pb-4 border-b border-slate-200">
             <Link
               to="/"
-              className="inline-flex items-center gap-1 px-4 py-2 text-sm font-bold text-sky-800 bg-sky-100 hover:bg-sky-200 border border-sky-200 rounded-xl transition-all duration-200 active:scale-95"
+              className="inline-flex items-center gap-1 px-4 py-2 text-sm font-bold text-sky-800 bg-sky-100 hover:bg-sky-200 border border-sky-200 rounded-xl transition-all duration-200 active:scale-95 shrink-0"
             >
               {t.back}
             </Link>
+
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest text-right">
+              <span className="text-gradient">JULIUS AALTO.</span>
+            </h1>
           </nav>
 
           <header className="mb-8">
