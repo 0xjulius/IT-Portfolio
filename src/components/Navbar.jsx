@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link as ScrollLink, scroller } from "react-scroll";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link as RouterLink } from "react-router-dom";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -11,6 +11,7 @@ const navContent = {
     projects: "Projektit",
     skills: "Osaaminen",
     accolades: "Sertifikaatit",
+    blog: "Blogi",
   },
   en: {
     me: "Me",
@@ -18,15 +19,17 @@ const navContent = {
     projects: "Projects",
     skills: "Skills",
     accolades: "Accolades",
+    blog: "Blog",
   },
 };
 
 const navItems = [
-  { id: "home", key: "me" },
-  { id: "studies", key: "studies" },
-  { id: "projects", key: "projects" },
-  { id: "skills", key: "skills" },
-  { id: "awards", key: "accolades" },
+  { id: "home", key: "me", type: "scroll" },
+  { id: "studies", key: "studies", type: "scroll" },
+  { id: "projects", key: "projects", type: "scroll" },
+  { id: "skills", key: "skills", type: "scroll" },
+  { id: "awards", key: "accolades", type: "scroll" },
+  { id: "blog", key: "blog", type: "link", to: "/blog" },
 ];
 
 const Navbar = () => {
@@ -71,7 +74,14 @@ const Navbar = () => {
             key={item.id}
             className="font-semibold text-md sm:text-base ptx hover:text-purple-700 py-1.5 px-4 rounded-full transition-all duration-200 hover:bg-slate-900/5 cursor-pointer"
           >
-            {location.pathname === "/" ? (
+            {item.type === "link" ? (
+              <RouterLink
+                to={item.to}
+                className="cursor-pointer block w-full h-full"
+              >
+                {t[item.key]}
+              </RouterLink>
+            ) : location.pathname === "/" ? (
               <ScrollLink
                 to={item.id}
                 spy={true}
@@ -121,7 +131,15 @@ const Navbar = () => {
           <ul className="flex flex-col gap-2 text-2xl text-center text-white px-6 w-full max-w-xs">
             {navItems.map((item) => (
               <li key={item.id} className="w-full">
-                {location.pathname === "/" ? (
+                {item.type === "link" ? (
+                  <RouterLink
+                    to={item.to}
+                    onClick={() => setNav(false)}
+                    className="cursor-pointer block py-3 px-6 rounded-xl hover:bg-white/10 hover:text-cyan-400 transition-all duration-200"
+                  >
+                    {t[item.key]}
+                  </RouterLink>
+                ) : location.pathname === "/" ? (
                   <ScrollLink
                     to={item.id}
                     smooth={true}
