@@ -2,7 +2,7 @@
 
 ## Yhteenveto
 
-Tässä projektissa rakennetaan Windows-koneelle itse hallittava tekoälyagentti, joka käyttää [Hermes Agentia](https://github.com/NousResearch/hermes-agent) (Nous Research), Docker Desktopia ja paikallisesti ajettavaa kielimallia LM Studion kautta. Agenttia voidaan käyttää Hermesin web-dashboardin kautta [2] sekä Telegram-botin välityksellä [10].
+Tässä projektissa rakennetaan Windows-koneelle itse hallittava tekoälyagentti, joka käyttää [Hermes Agentia](https://github.com/NousResearch/hermes-agent) (Nous Research) [1], Docker Desktopia ja paikallisesti ajettavaa kielimallia LM Studion kautta. Agenttia voidaan käyttää Hermesin web-dashboardin kautta [2] sekä Telegram-botin välityksellä [10].
 
 Tavoitteena on yhdistää paikallisen mallin kustannus- ja hallintaedut agentin työkaluihin: komentojen suorittamiseen, tiedostojen käsittelyyn, toistuviin tehtäviin ja keskustelumuistiin. Samalla ympäristö pyritään pitämään rajattuna niin, ettei agentilla ole tarpeettomia oikeuksia Windows-isäntäkoneeseen.
 
@@ -61,6 +61,8 @@ Paikallisuudella on kuitenkin rajansa:
 - Mallin lataaminen ja ajaminen vaatii riittävästi RAM-muistia ja/tai GPU-muistia.
 - Mallin suorituskyky riippuu malliversiosta, kvantisoinnista, laitteistosta ja asetuksista.
 - Mallin kyky kutsua työkaluja riippuu sekä mallin koulutuksesta että siitä, miten agentti ja mallipalvelin välittävät työkalukutsut.
+- Hermes edellyttää vähintään 64 000 tokenin kontekstia. Paikallisessa mallissa kontekstin koko pitää asettaa vähintään tähän, koska pienemmällä kontekstilla varustetut mallit hylätään käynnistyksessä [5].
+- Pienet paikalliset mallit voivat väittää tallentaneensa asian muistiin kutsumatta `memory`-työkalua. Dokumentaation mukaan näin käy usein alle noin 30 miljardin parametrin malleilla, joten tallennus pitää tarkistaa muistitiedostosta [11].
 - Paikallinen malli ei itsessään takaa, että Hermesin terminaali, selain, Telegram tai muut integraatiot toimivat.
 - Jos agentille otetaan käyttöön ulkoisia palveluita, niiden käyttö voi aiheuttaa kustannuksia ja tietojen siirtymistä palveluntarjoajille.
 
@@ -72,7 +74,7 @@ Tässä kokoonpanossa käytetään Gemma 4 12B -mallia LM Studion kautta [7]. Ge
 
 ## Miksi Hermes Agent?
 
-Hermes on agenttikehys, ei pelkkä keskustelumalli. Sen tehtävänä on ohjata mallin ja työkalujen välistä vuorovaikutusta. Hermesin dokumentaatiossa kuvataan muun muassa:
+Hermes on agenttikehys, ei pelkkä keskustelumalli. Sen tehtävänä on ohjata mallin ja työkalujen välistä vuorovaikutusta. Hermes Agent on MIT-lisensoitu avoimen lähdekoodin projekti, ja sen oma kuvaus korostaa oppimissilmukkaa: agentti voi luoda taitoja kokemuksesta, parantaa niitä käytössä ja pyrkiä tallentamaan tietoa pysyvästi [1]. Hermesin dokumentaatiossa kuvataan muun muassa:
 
 - terminaalin ja koodin suorittamisen työkalut
 - tiedostojen käsittely ja työskentelyhakemisto
@@ -131,17 +133,45 @@ Keskeiset muuttujat:
 | Käynnistys | `gateway run` |
 | Dashboardin aktivointi | `HERMES_DASHBOARD=1` |
 
+Hermes tukee LM Studiota omana providerinaan. Osoite voidaan antaa `LM_BASE_URL`-ympäristömuuttujalla (oletus `http://localhost:1234/v1`) ja avain `LM_API_KEY`-muuttujalla, joka on paikallisella palvelimella usein pelkkä paikkamerkki [6]. Kontin sisällä `localhost` viittaa kontin omaan ympäristöön eikä isäntäkoneeseen, minkä vuoksi taulukossa käytetään osoitetta `host.docker.internal` [3].
+
 Dashboardin julkaiseminen osoitteeseen `127.0.0.1` rajoittaa portin isäntäkoneen paikalliseen loopback-osoitteeseen. Tämä on hyvä oletus henkilökohtaiseen käyttöön, mutta se ei korvaa autentikointia eikä muiden verkkoasetusten tarkistamista.
 
 ## Pysyvä data ja projektitiedostot
 
-Projektissa käytetään Docker named volumea `hermes-data`, joka liitetään polkuun `/opt/data` [3]. Hermeksen Docker-dokumentaation mukaan tämä hakemisto toimii konttiasennuksen pysyvän tilan sijaintina. Siellä voidaan säilyttää esimerkiksi:
+Projektissa käytetään Docker named volumea `hermes-data`, joka liitetään polkuun `/opt/data` [3]. Hermeksen Docker-dokumentaation mukaan tämä hakemisto toimii konttiasennuksen pysyvän tilan sijaintina. Hermesin kotihakemisto määräytyy `HERMES_HOME`-ympäristömuuttujasta. Oletuksena se on `~/.hermes` (natiivissa Windows-asennuksessa `%LOCALAPPDATA%\hermes`), ja virallinen Docker-image käyttää polkua `/opt/data` [6]. Kontissa koko Hermesin tila on siis yhdessä hakemistossa, joka näyttää dokumentaation mukaan seuraavalta [3][4]:
 
-- `config.yaml`: Hermesin asetukset
-- `.env`: API-avaimet ja muut salaisuudet
-- `SOUL.md`: agentin persoonaa ja toimintatapoja kuvaavat ohjeet
-- keskustelusessiot ja muistit
-- asennetut taidot ja muut Hermesin tiedot.
+```text
+/opt/data                  # Docker-volume hermes-data (muualla ~/.hermes)
+├── config.yaml            # Asetukset: malli, terminal, muisti, pakkaus jne.
+├── .env                   # API-avaimet ja muut salaisuudet
+├── auth.json              # OAuth-tunnistetiedot (esim. Nous Portal)
+├── SOUL.md                # Agentin ensisijainen identiteetti (system promptin ensimmäinen osa)
+├── memories/              # Pysyvä muisti
+│   ├── MEMORY.md          #   agentin omat muistiinpanot: ympäristö, käytännöt, opitut asiat
+│   └── USER.md            #   käyttäjäprofiili: mieltymykset, viestintätyyli, odotukset
+├── skills/                # Taidot: mukana tulevat, asennetut ja agentin itse luomat
+├── sessions/              # Keskusteluhistoria
+├── state.db               # SQLite-tietokanta: sessiot, viestit ja gateway-reititys
+├── cron/                  # Ajastettujen tehtävien määritykset
+├── hooks/                 # Tapahtumakoukut
+├── logs/                  # Lokit (esim. agent.log, errors.log, gateway.log; salaisuudet piilotetaan)
+├── home/                  # Työkalu-alaprosessien HOME (git, ssh, gh, npm ja taito-CLI:t)
+├── skins/                 # Omat CLI-teemat
+├── cache/                 # Välimuistit ja tilapäistiedostot
+├── backups/               # Asetusten ja päivitysten varmuuskopiot
+├── pending/               # Hyväksyntää odottavat taitotallennukset (jos write_approval on päällä)
+├── installs/              # Valinnaisten lisäosien riippuvuudet (asentuvat ensikäytössä)
+└── profiles/              # Muut profiilit: jokaisella oma SOUL, muisti, taidot ja sessiot
+```
+
+`SOUL.md` on siis vain yksi tiedosto monista. Muisti, taidot, keskusteluhistoria ja tietokanta tallentuvat omiin paikkoihinsa, ja koko hakemisto sisältää sekä salaisuuksia (`.env`, `auth.json`) että henkilökohtaisia tietoja (`memories/`, `sessions/`, `state.db`). Käytännön huomioita:
+
+- **Yksi data-hakemisto, yksi gateway.** Samaa data-hakemistoa ei pidä käyttää kahdella samanaikaisella gateway-kontilla, koska sessiotiedostoja ja muistia ei ole suunniteltu samanaikaiseen kirjoitukseen [3].
+- **Nimetty volume suojaa tietokantaa.** `state.db` käyttää oletuksena SQLiten WAL-tilaa, ja Docker Desktopin Windows-bind mountit (9p/drvfs) voivat dokumentaation mukaan vioittaa WAL-tietokannan huomaamatta. Nimetty Docker-volume, kuten tässä projektissa käytetty `hermes-data`, sijaitsee Docker-virtuaalikoneen omalla tiedostojärjestelmällä ja tukee WAL-tilaa normaalisti [3].
+- **Profiilit eristävät tilan.** Muisti on profiilikohtainen, joten toinen profiili ei näe ensimmäisen muistia, taitoja tai sessioita [3][11].
+
+### Projektin omat tiedostot
 
 Projektissa käytetään lisäksi omia dokumentteja:
 
@@ -155,11 +185,39 @@ Projektissa käytetään lisäksi omia dokumentteja:
 | Telegram-botti | Agentin käyttö puhelimesta |
 | Vianetsintämuistiinpanot | Kirjaa tehdyt muutokset ja tunnetut ongelmat |
 
+Hermes lataa system promptiin kontekstitiedostoina muun muassa tiedostot `SOUL.md`, `.hermes.md`, `AGENTS.md`, `CLAUDE.md` ja `.cursorrules`, ja ladattavaa sisältöä rajoittaa asetus `context_file_max_chars` [4].
+
 Ohjetiedostot, kuten `SOUL.md` ja `AGENTS.md`, ohjaavat mallin käyttäytymistä, mutta eivät yksin muodosta teknistä turvarajaa. Niiden lisäksi tarvitaan käyttöoikeuksien, verkon ja suoritusympäristön rajoituksia.
+
+## Miten Hermes oppii käyttäjästä
+
+Hermes ei ole tilaton keskustelija. Sen tarkoitus on kerätä tietoa käyttäjästä, ympäristöstä ja aiemmin ratkaistuista tehtävistä niin, että tieto on käytettävissä myös seuraavissa sessioissa. Tämä tapahtuu usealla toisiaan täydentävällä mekanismilla:
+
+| Mekanismi | Sijainti | Sisältö |
+|---|---|---|
+| Agentin muistiinpanot | `memories/MEMORY.md` | Ympäristötiedot, käytännöt ja opitut asiat; enintään 2 200 merkkiä [11] |
+| Käyttäjäprofiili | `memories/USER.md` | Käyttäjän mieltymykset, viestintätyyli ja odotukset; enintään 1 375 merkkiä [11] |
+| Keskusteluhistoria | `state.db`, `sessions/` | Kaikki CLI- ja viestialustasessiot SQLite-tietokannassa, haettavissa FTS5-täystekstihaulla `session_search`-työkalulla [11] |
+| Taidot | `skills/` | Uudelleenkäytettävät menettelyt `SKILL.md`-tiedostoina, joita agentti hallinnoi `skill_manage`-työkalulla [4][5] |
+
+Muistitiedostot ladataan system promptiin kerran session alussa. Agentti hallinnoi niitä itse `memory`-työkalulla (lisää, korjaa, poistaa), ja muutokset tallentuvat levylle heti, mutta ne näkyvät mallille vasta seuraavassa sessiossa [11]. Muisti ei tiivisty automaattisesti: kun raja tulee vastaan, työkalu palauttaa virheen ja agentin on itse yhdistettävä tai poistettava vanhoja merkintöjä [11].
+
+Taidot syntyvät kokemuksesta: agentti voi tallentaa onnistuneen ratkaisun taidoksi [1][4]. Taidon täysi sisältö ladataan vasta, kun tehtävä sitä tarvitsee, joten taitojen lisääminen ei kasvata jokaisen pyynnön kokoa. Mukana tulee myös valmis taitokatalogi, joka asennetaan hakemistoon `skills/` [5].
+
+Telegramissa keskustelu on oletuksena yksi jatkuva sessio, joka säilyy uudelleenkäynnistyksissä. Tämä hidastaa oppimista, koska muistin ja historiahaun hyöty tulee esiin vasta session rajalla. Dokumentaation suositus on aloittaa uusi sessio komennolla `/new` luontevissa taukokohdissa, esimerkiksi tehtävän päätyttyä [11].
+
+### Oppimisen hallinta ja yksityisyys
+
+Koska nämä tiedostot kertovat käyttäjästä, niitä on käsiteltävä henkilötietoina:
+
+- **Hyväksyntä ennen tallennusta.** Asetus `memory.write_approval: true` vaatii hyväksynnän ennen muistitallennusta. Telegramissa ja taustalla ajettavan itsearvioinnin tallennukset jäävät odottamaan komentoja `/memory pending`, `/memory approve` ja `/memory reject` [4][11].
+- **Taitojen tallennukset samalla tavalla.** Asetus `skills.write_approval: true` pysäyttää taitojen luonnin ja muokkauksen; muutokset odottavat hakemistossa `~/.hermes/pending/skills/`, ja niitä tarkastellaan komennoilla `/skills pending` ja `/skills diff` [4].
+- **Näe ja korjaa opitut asiat.** Komento `hermes journey` näyttää aikajanalla, mitä Hermes on oppinut, ja sillä voi muokata tai poistaa yksittäisiä taitoja ja muistimerkintöjä [11]. Muistitiedostot voi lukea myös suoraan hakemistosta `memories/` [11].
+- **Muistin sisältö kulkee kehotteen mukana.** Koska `MEMORY.md` ja `USER.md` syötetään osaksi system promptia, niiden sisältö on mukana jokaisessa mallikutsussa. Paikallisella mallilla se pysyy LM Studiossa, mutta jos käyttöön otetaan ulkoinen mallipalvelu tai ulkoinen muistipalvelu, tietosuoja-arvio pitää tehdä uudelleen [11].
 
 ## Terminal-työkalun käyttöönotto ja testaus
 
-Hermeksen työkalut eivät välttämättä ole kaikki käytössä asennuksen jälkeen. Ennen kuin agentilta odotetaan tiedostojen muokkaamista tai koodin ajamista, pitää varmistaa seuraavat asiat:
+Hermeksen työkalut eivät välttämättä ole kaikki käytössä asennuksen jälkeen. Käytössä olevia työkaluja voi säätää komennolla `hermes tools` [5]. Ennen kuin agentilta odotetaan tiedostojen muokkaamista tai koodin ajamista, pitää varmistaa seuraavat asiat:
 
 1. Terminal-työkaluryhmä on käytössä Hermesin työkaluasetuksissa.
 2. `terminal.backend` on valittu ja backendin edellytykset täyttyvät.
@@ -248,13 +306,13 @@ Projektin tärkeimmät käytännön opit ovat:
 
 ## Ensimmäiset testit
 
-Ennen kuin agentille annetaan laajoja tehtäviä, testaa yksi ominaisuus kerrallaan:
+Ennen kuin agentille annetaan laajoja tehtäviä, testaa yksi ominaisuus kerrallaan. Hermesin pika-aloitusohjeen periaate on sama: ensin pitää saada toimimaan yksi tavallinen keskustelu, ja gateway, ajastukset ja taidot lisätään vasta sen jälkeen [5]. Jos jokin ei toimi, komento `hermes doctor` kertoo puuttuvista tai vanhentuneista asetuksista [5].
 
 1. **Terminal:** pyydä agenttia suorittamaan `pwd` ja `date` ja palauttamaan tulosteet.
 2. **Tiedostot:** luo `workspace/hello.txt`, kirjoita siihen lyhyt teksti ja lue tiedosto takaisin.
 3. **Koodi:** kirjoita Python-ohjelma, suorita se ja tarkista tulos.
 4. **Verkkohaku:** pyydä hakemaan virallinen lähde ja tarkista, että käytössä on oikea hakutyökalu.
-5. **Muisti:** tallenna testitieto ja tarkista myöhemmin, säilyykö se uuden session jälkeen.
+5. **Muisti:** pyydä agenttia tallentamaan testitieto `memory`-työkalulla ja varmista, että merkintä löytyy tiedostosta `memories/MEMORY.md` (tai käyttäjätiedoista `USER.md`). Aloita sitten uusi sessio komennolla `/new` ja kysy tietoa uudelleen, koska muisti päivittyy mallille vasta uudessa sessiossa [11].
 6. **Turvallisuus:** varmista, että agentti ei pääse Windowsin tiedostoihin, joita sille ei ole tarkoituksella jaettu.
 
 Testituloksissa erotetaan aina toisistaan agentin ilmoitus ja todennettu suoritus. Jos agentti sanoo luoneensa tiedoston, varmista tiedoston olemassaolo ja sisältö.
@@ -280,7 +338,7 @@ Alla olevat lähteet ovat ensisijaisesti valmistajien ja projektien virallista d
 [3] **Hermes Agent — Docker-asennus ja Gateway-kontti**  
    https://hermes-agent.nousresearch.com/docs/user-guide/docker
 
-[4] **Hermes Agent — asetukset ja Terminal-backendit**  
+[4] **Hermes Agent — asetukset, hakemistorakenne ja Terminal-backendit**  
    https://hermes-agent.nousresearch.com/docs/user-guide/configuration
 
 [5] **Hermes Agent — pika-aloitus ja työkalujen käyttöönotto**  
@@ -300,3 +358,6 @@ Alla olevat lähteet ovat ensisijaisesti valmistajien ja projektien virallista d
 
 [10] **Telegram — Bot API**  
     https://core.telegram.org/bots/api
+
+[11] **Hermes Agent — pysyvä muisti (MEMORY.md, USER.md ja session_search)**  
+    https://hermes-agent.nousresearch.com/docs/user-guide/features/memory

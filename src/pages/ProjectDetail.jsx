@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkCitations from "../utils/remarkCitations";
 import { projects } from "../data/projectsData";
 import { useLanguage } from "../context/LanguageContext";
 import AuthorBio from "../components/AuthorBio";
@@ -238,7 +239,7 @@ export default function ProjectDetail() {
     return Math.max(1, Math.ceil(words / 200));
   }, [content, missing]);
 
-  // Markdown-komponentit: ankkurit otsikoille ja vierittyvät taulukot
+  // Markdown-komponentit: ankkurit otsikoille, vierittyvät taulukot ja lähdeviitteiden pehmeä vieritys
   const mdComponents = useMemo(() => {
     const heading =
       (Tag) =>
@@ -258,6 +259,37 @@ export default function ProjectDetail() {
           <table {...props} />
         </div>
       ),
+      // Lähdeviitteet (#ref-n / #cite-n): vieritä pehmeästi ja korosta kohde hetkeksi
+      a: ({ node, href, children, ...props }) => {
+        const isCitation =
+          href?.startsWith("#ref-") || href?.startsWith("#cite-");
+        if (!isCitation) {
+          return (
+            <a href={href} {...props}>
+              {children}
+            </a>
+          );
+        }
+        return (
+          <a
+            href={href}
+            {...props}
+            onClick={(e) => {
+              const target = document.getElementById(href.slice(1));
+              if (!target) return;
+              e.preventDefault();
+              target.scrollIntoView({ behavior: "smooth", block: "center" });
+              target.classList.add("bg-amber-100");
+              window.setTimeout(
+                () => target.classList.remove("bg-amber-100"),
+                1600,
+              );
+            }}
+          >
+            {children}
+          </a>
+        );
+      },
     };
   }, [idByLine]);
 
@@ -505,7 +537,7 @@ export default function ProjectDetail() {
                 prose-table:font-sans prose-table:w-full prose-table:my-0 prose-th:text-slate-900 prose-th:bg-slate-100 prose-th:p-3 prose-th:border-b-2 prose-th:border-slate-300 prose-td:border-b prose-td:border-slate-200 prose-td:p-3"
             >
               <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
+                remarkPlugins={[remarkGfm, remarkCitations]}
                 components={mdComponents}
               >
                 {content}
