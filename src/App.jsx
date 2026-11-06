@@ -26,7 +26,7 @@ import Gallery from "./components/Gallery.jsx";
 import ProjectsNew from "./components/ProjectsNew.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import VantaBackground from "./components/VantaBackground.jsx";
-import BlogIndex from "./pages/BlogIndex.jsx";
+import BlogIndex from "./pages/Blogindex.jsx";
 
 // Ohjaa vanhat /projects/<slug>-linkit uuteen /blog/<slug>-osoitteeseen
 function RedirectToBlog() {
