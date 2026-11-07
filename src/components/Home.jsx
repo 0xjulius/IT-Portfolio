@@ -1,6 +1,6 @@
 import React from "react";
 import heropic from "../images/omakuva.webp";
-import { FaLinkedin, FaFolderOpen } from "react-icons/fa";
+import { FaLinkedin, FaGithub, FaArrowRight } from "react-icons/fa";
 import { useLanguage } from "../context/LanguageContext";
 
 const content = {
@@ -69,6 +69,16 @@ const Home = () => {
               >
                 <FaLinkedin className="text-xl" />
                 <span>LinkedIn</span>
+              </a>
+              {/* Vaihda käyttäjänimi omaksesi */}
+              <a
+                href="https://github.com/0xjulius"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#24292f] hover:bg-[#1b1f23] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+              >
+                <FaGithub className="text-xl" />
+                <span>GitHub</span>
               </a>
             </div>
           </div>

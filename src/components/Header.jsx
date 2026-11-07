@@ -6,12 +6,12 @@ import "animate.css";
 
 const headerContent = {
   fi: {
-    welcome: "Tervetuloa IT-portfoliooni!",
-    subtitle: "Toteutettu Reactilla ja Tailwind CSS:llä",
+    welcome: "Ohjelmisto- ja web-kehittäjä",
+    subtitle: "Rakennan älykkäitä ratkaisuja yrityksen tarpeisiin.",
   },
   en: {
-    welcome: "Welcome to my IT-Portfolio!",
-    subtitle: "Made with React and Tailwind.css",
+    welcome: "Software & web developer",
+    subtitle: "I build smart solutions for real business needs.",
   },
 };
 
@@ -25,7 +25,6 @@ function Header() {
       <div className="fixed top-4 left-4 z-50">
         <LanguageToggle />
       </div>
-
       <section className="md:flex lg:justify-start justify-center sticky z-10 px-4">
         <div className="text-center xl:pl-40 2xl:pl-60">
           <h1 className="w-full text-5xl font-semibold flex-1 font tracking-widest lg:text-6xl">

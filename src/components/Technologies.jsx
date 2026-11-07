@@ -14,6 +14,9 @@ import {
   faWordpress,
   faPhp,
   faTelegram,
+  faApple,
+  faAndroid,
+  faNodeJs,
 } from "@fortawesome/free-brands-svg-icons";
 import {
   faDatabase,
@@ -29,6 +32,18 @@ import {
   faChevronDown,
   faCode,
   faLayerGroup,
+  faWandMagicSparkles,
+  faBolt,
+  faGlobe,
+  faNetworkWired,
+  faKey,
+  faLock,
+  faServer,
+  faBoxesStacked,
+  faMobileScreenButton,
+  faScrewdriverWrench,
+  faLaptopCode,
+  faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 
 const techGroups = [
@@ -53,6 +68,27 @@ const techGroups = [
         },
         icon: faBrain,
         color: "#10a37f",
+      },
+      {
+        name: {
+          fi: "Hermes Agent & Nous Research -mallit",
+          en: "Hermes Agent & Nous Research Models",
+        },
+        icon: faRobot,
+        color: "#7c3aed",
+      },
+      {
+        name: {
+          fi: "AI-avusteinen ohjelmistokehitys",
+          en: "AI-Assisted Software Development",
+        },
+        icon: faWandMagicSparkles,
+        color: "#db2777",
+      },
+      {
+        name: { fi: "Prompt Engineering", en: "Prompt Engineering" },
+        icon: faBrain,
+        color: "#0284c7",
       },
       {
         name: { fi: "Telegram Bot -automaatio", en: "Telegram Bot Automation" },
@@ -83,11 +119,6 @@ const techGroups = [
         icon: faBrain,
         color: "#6366f1",
       },
-      {
-        name: { fi: "Prompt Engineering", en: "Prompt Engineering" },
-        icon: faBrain,
-        color: "#0284c7",
-      },
     ],
   },
   {
@@ -102,9 +133,29 @@ const techGroups = [
         color: "#3178C6",
       },
       {
+        name: { fi: "JavaScript (ES6+)", en: "JavaScript (ES6+)" },
+        icon: faJs,
+        color: "#d97706",
+      },
+      {
         name: { fi: "React & Next.js", en: "React & Next.js" },
         icon: faReact,
         color: "#087ea4",
+      },
+      {
+        name: { fi: "Node.js", en: "Node.js" },
+        icon: faNodeJs,
+        color: "#16a34a",
+      },
+      {
+        name: { fi: "Vite", en: "Vite" },
+        icon: faBolt,
+        color: "#7c3aed",
+      },
+      {
+        name: { fi: "HTML5 & CSS3 / Tailwind", en: "HTML5 & CSS3 / Tailwind" },
+        icon: faHtml5,
+        color: "#ea580c",
       },
       {
         name: {
@@ -115,27 +166,22 @@ const techGroups = [
         color: "#e11d48",
       },
       {
-        name: { fi: "JavaScript (ES6+)", en: "JavaScript (ES6+)" },
-        icon: faJs,
-        color: "#d97706",
-      },
-      {
         name: { fi: "Python", en: "Python" },
         icon: faPython,
         color: "#2563eb",
       },
-      { name: { fi: "PHP", en: "PHP" }, icon: faPhp, color: "#4f46e5" },
       {
-        name: { fi: "HTML5 & CSS3 / Tailwind", en: "HTML5 & CSS3 / Tailwind" },
-        icon: faHtml5,
-        color: "#ea580c",
+        name: { fi: "C# & .NET (WinForms)", en: "C# & .NET (WinForms)" },
+        icon: faLaptopCode,
+        color: "#512BD4",
       },
+      { name: { fi: "PHP", en: "PHP" }, icon: faPhp, color: "#4f46e5" },
     ],
   },
   {
     title: {
-      fi: "Tietokannat, Pilvipalvelut & Tietoturva",
-      en: "Databases, Cloud & Cybersecurity",
+      fi: "Tietokannat, Pilvipalvelut & Identiteetit",
+      en: "Databases, Cloud & Identity",
     },
     items: [
       {
@@ -144,14 +190,27 @@ const techGroups = [
         color: "#3ECF8E",
       },
       {
-        name: { fi: "SQL & Tietokannat", en: "SQL & Databases" },
+        name: { fi: "SQL & MariaDB", en: "SQL & MariaDB" },
         icon: faDatabase,
         color: "#0284c7",
+      },
+      {
+        name: { fi: "DNS-palvelut", en: "DNS Services" },
+        icon: faGlobe,
+        color: "#0891b2",
       },
       {
         name: { fi: "Microsoft Azure", en: "Microsoft Azure" },
         icon: faCloud,
         color: "#0284c7",
+      },
+      {
+        name: {
+          fi: "Active Directory & Entra ID",
+          en: "Active Directory & Entra ID",
+        },
+        icon: faKey,
+        color: "#0078D4",
       },
       {
         name: {
@@ -161,10 +220,58 @@ const techGroups = [
         icon: faMicrosoft,
         color: "#0078D4",
       },
+    ],
+  },
+  {
+    title: {
+      fi: "Verkot, Tietoturva & VPN",
+      en: "Networking, Security & VPN",
+    },
+    items: [
       {
-        name: { fi: "Tietoturvan perusteet", en: "Cybersecurity Fundamentals" },
+        name: {
+          fi: "Tietoturvan perusteet",
+          en: "Cybersecurity Fundamentals",
+        },
         icon: faShieldHalved,
         color: "#16a34a",
+      },
+      {
+        name: {
+          fi: "Verkkoteknologiat (TCP/IP)",
+          en: "Network Technologies (TCP/IP)",
+        },
+        icon: faNetworkWired,
+        color: "#0284c7",
+      },
+      {
+        name: {
+          fi: "VPN & tunnelointiprotokollat",
+          en: "VPN & Tunneling Protocols",
+        },
+        icon: faLock,
+        color: "#4f46e5",
+      },
+      {
+        name: {
+          fi: "Salaus & varmuuskopiointi",
+          en: "Encryption & Backups",
+        },
+        icon: faUserShield,
+        color: "#dc2626",
+      },
+    ],
+  },
+  {
+    title: {
+      fi: "Käyttöjärjestelmät, Virtualisointi & Laitteet",
+      en: "Operating Systems, Virtualization & Devices",
+    },
+    items: [
+      {
+        name: { fi: "Windows-infrastruktuuri", en: "Windows Infrastructure" },
+        icon: faWindows,
+        color: "#0284c7",
       },
       {
         name: { fi: "Linux & Komentorivi", en: "Linux & Terminal" },
@@ -172,9 +279,35 @@ const techGroups = [
         color: "#d97706",
       },
       {
-        name: { fi: "Windows-infrastruktuuri", en: "Windows Infrastructure" },
-        icon: faWindows,
-        color: "#0284c7",
+        name: { fi: "macOS", en: "macOS" },
+        icon: faApple,
+        color: "#475569",
+      },
+      {
+        name: { fi: "VMware & VirtualBox", en: "VMware & VirtualBox" },
+        icon: faServer,
+        color: "#0891b2",
+      },
+      {
+        name: {
+          fi: "Ohjelmistohallinta & käyttöönotto",
+          en: "Software Management & Deployment",
+        },
+        icon: faBoxesStacked,
+        color: "#6366f1",
+      },
+      {
+        name: { fi: "iOS & Android -tuki", en: "iOS & Android Support" },
+        icon: faMobileScreenButton,
+        color: "#16a34a",
+      },
+      {
+        name: {
+          fi: "Laitteistodiagnostiikka & vianmääritys",
+          en: "Hardware Diagnostics & Troubleshooting",
+        },
+        icon: faScrewdriverWrench,
+        color: "#ea580c",
       },
     ],
   },
@@ -185,10 +318,7 @@ const techGroups = [
     },
     items: [
       {
-        name: {
-          fi: "Sanity Headless CMS",
-          en: "Sanity Headless CMS",
-        },
+        name: { fi: "Sanity Headless CMS", en: "Sanity Headless CMS" },
         icon: faLayerGroup,
         color: "#F04336",
       },
@@ -264,7 +394,8 @@ const Technologies = () => {
               >
                 <button
                   onClick={() => toggleDropdown(groupIdx)}
-                  className="w-full p-6 flex items-center justify-between text-left focus:outline-none hover:bg-white/30 transition-colors duration-200 cursor-pointer"
+                  aria-expanded={isOpen}
+                  className="w-full p-6 flex items-center justify-between text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 hover:bg-white/30 transition-colors duration-200 cursor-pointer"
                 >
                   <h3 className="text-lg font-bold text-slate-800">
                     {group.title[lang] || group.title.fi}
