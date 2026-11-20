@@ -15,7 +15,7 @@ const AwardCard = ({ image, title, issuedBy, desc }) => {
         className="flex items-center justify-between gap-3 cursor-pointer"
       >
         <div className="flex items-center gap-3 sm:gap-6 min-w-0">
-          <div className="w-14 h-14 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center bg-white/60 rounded-xl p-1 border border-gray-200/60 shadow-sm">
+          <div className="w-14 h-14 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center bg-white/60 rounded-xl p-1 border border-gray-200/60 shadow-sm ">
             <img
               src={image}
               alt={title}
@@ -23,7 +23,7 @@ const AwardCard = ({ image, title, issuedBy, desc }) => {
             />
           </div>
           <div className="text-left min-w-0">
-            <h2 className="text-lg sm:text-2xl lg:text-3xl font-extrabold ptx leading-snug">
+            <h2 className="text-lg sm:text-2xl font-extrabold ptx leading-snug">
               {title}
             </h2>
             {issuedBy && (
@@ -76,7 +76,7 @@ const HonorCard = ({ image, title, link, issuedBy, desc, moreText }) => {
             />
           </div>
           <div className="text-left min-w-0">
-            <h2 className="text-lg sm:text-2xl lg:text-3xl font-extrabold ptx leading-snug">
+            <h2 className="text-lg sm:text-2xl font-extrabold ptx leading-snug">
               {link && !isOpen ? (
                 <span className="underline">{title}</span>
               ) : (
