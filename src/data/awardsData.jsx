@@ -15,6 +15,7 @@ import awardImage13 from "../images/cf-ibm.png";
 import awardImage14 from "../images/ibm-design-ai.png";
 import awardImage15 from "../images/ibm-ai-lit.png";
 import awardImage16 from "../images/hardware.png";
+import awardImage17 from "../images/BadgeEmblem_BuildAnAIAgent.png";
 
 export const awardsContent = {
   fi: {
@@ -22,7 +23,37 @@ export const awardsContent = {
     honorsTitle: "Tunnustukset & Palkinnot",
     certificates: [
       {
-        image: awardImage16, // Varmista että kuvamuuttuja on tuotu tiedoston alussa
+        image: awardImage17,
+        title: "Build an AI Agent",
+        issuedBy: "Marraskuu, 2026 - IBM, SkillsBuild",
+        desc: (
+          <>
+            Osoittaa teknisen osaamisen ja käytännön taidot rakentaa{" "}
+            <span className="ptx2 font-bold">AI-agentteja</span>{" "}
+            <span className="ptx2 font-bold">IBM watsonx.ai</span> -alustalla
+            sekä optimoida niiden suorituskykyä. Suorittaja osaa luokitella
+            AI-agentteja päätöksentekotavan perusteella, kuvata agentin
+            työnkulun jäsentämisen vaiheet, tunnistaa sopivat{" "}
+            <span className="ptx2 font-bold">arviointimittarit</span> sekä
+            selittää keskeiset näkökohdat agenttien{" "}
+            <span className="ptx2 font-bold">
+              käyttöönotossa ja ylläpidossa
+            </span>
+            .{" "}
+            <a
+              href="https://www.credly.com/badges/11a2ffc5-c258-46a9-8c36-88b30636e5c5"
+              target="_blank"
+              rel="noreferrer"
+              className="text-purple-600 underline font-semibold inline-block mt-2"
+            >
+              Katso Credly-sertifikaatti →
+            </a>
+          </>
+        ),
+      },
+
+      {
+        image: awardImage16,
         title: "Hardware Components and Troubleshooting",
         issuedBy: "Lokakuu, 2026 - IBM, SkillsBuild",
         desc: (
@@ -310,6 +341,35 @@ export const awardsContent = {
     certificatesTitle: "Certificates",
     honorsTitle: "Awards and Honors",
     certificates: [
+      {
+        image: awardImage17,
+        title: "Build an AI Agent",
+        issuedBy: "November, 2026 - IBM, SkillsBuild",
+        desc: (
+          <>
+            Demonstrates the technical knowledge and practical skills to build{" "}
+            <span className="ptx2 font-bold">AI agents</span> using{" "}
+            <span className="ptx2 font-bold">IBM watsonx.ai</span> and optimize
+            their performance. The earner can classify AI agents based on their
+            decision-making approach, describe the steps to structure an AI
+            agent workflow, identify appropriate{" "}
+            <span className="ptx2 font-bold">evaluation metrics</span>, and
+            explain key considerations for{" "}
+            <span className="ptx2 font-bold">
+              deploying and maintaining AI agents
+            </span>
+            .{" "}
+            <a
+              href="https://www.credly.com/badges/11a2ffc5-c258-46a9-8c36-88b30636e5c5"
+              target="_blank"
+              rel="noreferrer"
+              className="text-purple-600 underline font-semibold inline-block mt-2"
+            >
+              View Credly badge →
+            </a>
+          </>
+        ),
+      },
       {
         image: awardImage16, // Muista tarkistaa oikea kuvamuuttuja
         title: "Hardware Components and Troubleshooting",
