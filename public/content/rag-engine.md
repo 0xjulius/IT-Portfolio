@@ -2,6 +2,8 @@
 
 RAG (Retrieval-Augmented Generation) on arkkitehtuuri, jossa paikallinen kielimalli (LLM) hakee reaaliaikaisesti faktoja yrityksen omista dokumenteista ja muodostaa vastauksen niiden pohjalta pelkän ulkoa opitun tiedon sijaan.
 
+Järjestelmä on niin sanottu "Model-based reflex agent", joka käyttää reaaliaikaista dataa, tai tietoa luomaan vastauksia ja suorittaa olennaisia toimenpiteitä syötettyjen tietojen mukaan kunnioittaen etukäteen luotua "system prompt"-kehotetta.
+
 Esitä kysymyksiä omista PDF-dokumenteistasi ja saa vastaukset lähdeviitteineen niin, että kaikki dokumentit, upotukset ja kehotteet pysyvät omalla laitteistollasi.
 
 > **"Tietosuoja on suurin yksittäinen este tekoälyn käyttöönotolle yrityksissä Euroopassa ja Suomessa."**
