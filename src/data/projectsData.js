@@ -105,7 +105,7 @@ export const projectsData = [
     slug: "duunify-mini-saas",
     hasArticle: true,
     publishedAt: "2026-05-10",
-    updatedAt: "2026-11-02",
+    updatedAt: "2026-11-25",
     tags: [
       "NextJS",
       "Tailwind",
