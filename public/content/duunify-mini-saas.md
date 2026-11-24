@@ -8,13 +8,13 @@ Alkuperäinen ydinidea oli ratkaista ongelma, jossa työnhakija joutuu ylläpit�
 
 ---
 
-# 1. Liiketoimintaongelma ja käyttötapaukset
+## 1. Liiketoimintaongelma ja käyttötapaukset
 
 Perinteinen työnhaku koostuu helposti useista erillisistä työkaluista. Työpaikat löytyvät eri palveluista, hakemukset lähetetään eri järjestelmissä ja haastattelut sekä muistutukset ovat erillisissä kalentereissa.
 
 Tämä aiheuttaa erityisesti kolme ongelmaa:
 
-- **Manuaalinen työ:** työpaikkailmoitusten tietojen kopioiminen ja hakemusten ylläpitäminen vie aikaa.
+- **Manuaalinen työ:** työpaikkailmoitusten tietojen kopioiminen ja hakemusten ylläpitämminen vie aikaa.
 - **Kokonaiskuvan puute:** hakija ei aina tiedä, missä vaiheessa eri hakemukset ovat.
 - **Tietojen katoaminen:** työpaikkailmoitus voi poistua alkuperäisestä palvelusta, vaikka hakuprosessi jatkuisi vielä viikkoja.
 
@@ -51,7 +51,7 @@ Tämä muodostaa myös pohjan muille ominaisuuksille, kuten työnhakuavustajalle
 
 ---
 
-# UC-2: Hakemusten hallinta
+## UC-2: Hakemusten hallinta
 
 Käyttäjä voi seurata työnhaun etenemistä yhdestä näkymästä.
 
@@ -69,9 +69,9 @@ Tavoitteena on, että käyttäjän ei tarvitse muistaa ulkoa, mitä missäkin ha
 
 ---
 
-# UC-3: Kalenteri ja muistutukset
+## UC-3: Kalenteri ja reaaliaikainen puhelinsynkronointi
 
-Työnhakuun liittyy paljon päivämääriä:
+Työnhakuun liittyy paljon tärkeitä päivämääriä ja aikatauluja:
 
 - hakuaikoja
 - haastatteluja
@@ -79,13 +79,22 @@ Työnhakuun liittyy paljon päivämääriä:
 - muistutuksia
 - muita sovittuja tapahtumia
 
-Duunify kokoaa nämä samaan kalenteriin.
+Duunify kokoaa nämä samaan kalenteriin. Näin hakija pystyy näkemään työnhaun aikataulun kokonaisuutena ja vähentämään unohtuneita määräaikoja.
 
-Näin hakija pystyy näkemään työnhaun aikataulun kokonaisuutena ja vähentämään unohtuneita määräaikoja.
+### Automaattinen kalenteritilaus puhelimeen (ICS-syöte)
+
+Duunifyn kalenteriin luotiin mahdollisuus tilata **reaaliaikaiset ja automaattiset päivitykset suoraan omaan puhelimen kalenteriin** (esim. Apple Calendar, Google Calendar ja Outlook), mikä on merkittävä ja arkea mullistava parannus työnhaun seurantaan.
+
+Käyttäjän ei tarvitse enää avata verkkosovellusta erikseen tarkistaakseen tulevat haastattelut tai umpeutuvat hakuajat, vaan kaikki muutokset päivittyvät automaattisesti käyttäjän omaan arkikalenteriin:
+
+- **Yksilöllinen ja suojattu tilauslinkki:** Järjestelmä muodostaa käyttäjälle henkilökohtaisen token-pohjaisen ICS-syötteen (`app/api/calendar/[token]/route.ts`), joka noudattaa RFC 5545 -standardia.
+- **Rikas tapahtumasisältö:** Puhelimen kalenterimerkinnät sisältävät automaattisesti tehtävän perustiedot, sijainnin, palkkatiedot, tiivistelmän työpaikkailmoituksesta, omat muistiinpanot sekä suoran linkin alkuperäiseen työpaikkailmoitukseen.
+- **Älykkäät hälytykset:** Tapahtumiin liitetään automaattiset muistutukset (esimerkiksi tunti ennen haastattelua tai edellisenä päivänä, mikäli tallennetun paikan hakuaika on päättymässä).
+- **Tehokas ja tietoturvallinen toteutus:** Syöte hyödyntää ETag-välimuistitusta (`304 Not Modified`) sekä IP- ja token-kohtaista rate limiting -suojausta (`lib/ratelimit-calendar.ts`), jotta synkronointi toimii nopeasti ja turvallisesti ilman tarpeetonta kuormitusta.
 
 ---
 
-# UC-4: Työnhaun analytiikka
+## UC-4: Työnhaun analytiikka
 
 Duunify kerää tietoa käyttäjän työnhakuprosessista ja näyttää sitä visuaalisesti.
 
@@ -101,7 +110,7 @@ Tavoitteena ei ole pelkästään näyttää numeroita, vaan auttaa käyttäjää
 
 ---
 
-# UC-5: Työnhakuavustaja
+## UC-5: Työnhakuavustaja
 
 Työnhakuavustaja on yksi Duunifyn merkittävimmistä uusista ominaisuuksista.
 
@@ -131,7 +140,7 @@ Tämän ansiosta käyttäjä voi käyttää samaa pohjaa useiden hakemusten läh
 
 ---
 
-# UC-6: Tekoälyn tietosuojan tukeminen
+## UC-6: Tekoälyn tietosuojan tukeminen
 
 Duunifyn tekoälytoiminnoissa käytetään erillistä tekstin esikäsittelyä (`lib/anonymize.ts`).
 
@@ -167,7 +176,7 @@ Anonymisointi ei kuitenkaan ole täydellinen henkilötietojen tunnistusjärjeste
 
 ---
 
-# UC-7: Järjestelmän ylläpito ja turvallisuus
+## UC-7: Järjestelmän ylläpito ja turvallisuus
 
 Duunify sisältää erillisen ylläpitojärjestelmän.
 
@@ -185,7 +194,7 @@ Admin-reitit suojataan myös sovelluksen palvelinpuolen reitityksessä, jotta ta
 
 ---
 
-# UC-8: Demo-tila
+## UC-8: Demo-tila
 
 Duunify sisältää myös kirjautumattoman demo-ympäristön.
 
@@ -195,7 +204,7 @@ Tämän avulla palvelua voidaan esitellä ilman, että käyttäjän täytyy ensi
 
 ---
 
-# 2. Teknologiapino
+## 2. Teknologiapino
 
 ## 2.1 Frontend
 
@@ -229,7 +238,7 @@ Käyttöliittymä on responsiivinen ja toimii sekä työpöydällä että mobiil
 
 ---
 
-# 2.2 Backend ja tietokanta
+## 2.2 Backend ja tietokanta
 
 ### Supabase
 
@@ -242,6 +251,7 @@ Tietokantaan tallennetaan esimerkiksi:
 - työpaikat
 - hakemukset
 - kalenteritapahtumat
+- kalenterisyötteiden tilausavaimet (`calendar_feeds`)
 - toimintahistoria
 - admin-lokit
 
@@ -259,7 +269,7 @@ Resendiä käytetään sähköpostien lähettämiseen esimerkiksi yhteydenottolo
 
 ---
 
-# 2.3 Tekoäly
+## 2.3 Tekoäly
 
 Duunifyn työnhakuavustaja hyödyntää Google Gemini -malleja.
 
@@ -271,7 +281,7 @@ Tämä on tärkeä arkkitehtuuriratkaisu, koska ulkoisen tekoälypalvelun tunnis
 
 ---
 
-# 3. Tietoturva
+## 3. Tietoturva
 
 ## 3.1 Roolipohjainen pääsynhallinta
 
@@ -315,7 +325,7 @@ Tämän yhteyden tunnistetietoja ei koskaan tule sijoittaa client-puolen koodiin
 
 ---
 
-# 3.4 Käyttäjien bännijärjestelmä
+## 3.4 Käyttäjien bännijärjestelmä
 
 Duunify sisältää käyttäjien tilapäisen ja pysyvän estämisen.
 
@@ -331,7 +341,7 @@ Tämä muodostaa ensimmäisen suojakerroksen ennen varsinaisten suojattujen näk
 
 ---
 
-# 3.5 API-reittien suojaaminen
+## 3.5 API-reittien suojaaminen
 
 Tekoälytoimintoja ja muita palvelinpuolen toimintoja ei tule suojata pelkästään piilottamalla niiden käyttöliittymässä oleva painike.
 
@@ -341,7 +351,7 @@ Tällä estetään tilanne, jossa tavallinen käyttäjä yrittäisi kutsua esime
 
 ---
 
-# 4. Datan käsittely
+## 4. Datan käsittely
 
 ## 4.1 Työpaikkailmoituksen käsittely
 
@@ -363,7 +373,7 @@ Tekoälylle pyritään välittämään mahdollisimman paljon työn kannalta olen
 
 ---
 
-# 5. Tietokannan eheys ja poistaminen
+## 5. Tietokannan eheys ja poistaminen
 
 Kun hakemus poistetaan, siihen liittyviä tietoja voidaan poistaa tietokannan relaatiomallin mukaisesti.
 
@@ -373,7 +383,7 @@ Tämä mahdollistaa sen, että esimerkiksi käyttäjän aktiivisuushistoria ei v
 
 ---
 
-# 6. Demo ja uudelleenkäytettävät komponentit
+## 6. Demo ja uudelleenkäytettävät komponentit
 
 Demo- ja tuotantoympäristö hyödyntävät samoja käyttöliittymäkomponentteja.
 
@@ -387,7 +397,7 @@ Tämä vähentää koodin duplikaatiota ja tekee käyttöliittymästä helpommin
 ---
 
 
-# 7. Arkkitehtuurin kokonaiskuva
+## 7. Arkkitehtuurin kokonaiskuva
 
 Duunifyn kokonaisuus voidaan tiivistää seuraavasti:
 
@@ -429,7 +439,7 @@ Tärkeä osa arkkitehtuuria on se, että käyttöliittymä, palvelinlogiikka, ti
 
 ---
 
-# 8. Projektin nykyinen kehityssuunta
+## 8. Projektin nykyinen kehityssuunta
 
 Duunify on kehittynyt alkuperäisestä työpaikkailmoitusten keräämiseen ja hakemusten seurantaan keskittyvästä työkalusta kohti kokonaisvaltaisempaa työnhaun työkalua.
 
@@ -447,7 +457,7 @@ Se ei ole enää pelkästään työnhaun seurantatyökalu, vaan alusta, joka voi
 
 ## 9. Projektin Rakenne
 ```
-duunify/
+jobtracker
 ├── .env.local
 ├── .gitignore
 ├── app
@@ -468,6 +478,9 @@ duunify/
 │   │   │           ├── confirm
 │   │   │           │   └── route.ts
 │   │   │           └── route.ts
+│   │   ├── calendar
+│   │   │   └── [token]
+│   │   │       └── route.ts
 │   │   ├── contact
 │   │   │   └── route.ts
 │   │   ├── cron
@@ -564,9 +577,12 @@ duunify/
 │   │   ├── ApplicationStats.tsx
 │   │   ├── CompanyLogo.tsx
 │   │   └── QuickAddApplication.tsx
+│   ├── BuyCreditsModal.tsx
 │   ├── calendar
 │   │   ├── AddEventModal.tsx
 │   │   ├── CalendarClient.tsx
+│   │   ├── CalendarSubscribeButton.tsx
+│   │   ├── CalendarToolbar.tsx
 │   │   ├── CalendarView.tsx
 │   │   ├── EventDetailModal.tsx
 │   │   ├── MiniCalendar.tsx
@@ -622,7 +638,9 @@ duunify/
 │   ├── NavBar.tsx
 │   ├── NavBarWait.tsx
 │   ├── NotificationsDropdown.tsx
+│   ├── NotificationsModal.tsx
 │   ├── PageHeader.tsx
+│   ├── PageHero.tsx
 │   ├── settings
 │   │   ├── AvatarUpload.tsx
 │   │   ├── PasswordChangeForm.tsx
@@ -665,6 +683,7 @@ duunify/
 │   ├── history.ts
 │   ├── logger.ts
 │   ├── middleware.ts
+│   ├── ratelimit-calendar.ts
 │   ├── ratelimit.ts
 │   ├── supabase-admin.ts
 │   ├── supabase-server.ts
@@ -711,6 +730,7 @@ duunify/
 │   ├── vercel.svg
 │   └── window.svg
 ├── README.md
+├── state
 ├── tsconfig.json
 └── vercel.json
 ```
@@ -727,7 +747,7 @@ Palvelun keskeisiä kokonaisuuksia ovat:
 
 - **Työpaikkailmoitusten automaattinen tallennus:** Käyttäjä voi tuoda työpaikkailmoituksen URL-osoitteella, jolloin järjestelmä poimii ilmoituksesta olennaiset tiedot ja tallentaa myös alkuperäisen ilmoitustekstin myöhempää käyttöä varten.
 - **Hakemusten hallinta:** Käyttäjä voi seurata hakemustensa etenemistä yhdestä paikasta, lisätä muistiinpanoja ja liittää mukaan esimerkiksi CV:n ja saatekirjeen.
-- **Kalenteri ja muistutukset:** Haastattelut, hakuajat ja muut työnhakuun liittyvät tapahtumat voidaan hallita keskitetysti.
+- **Kalenteri ja reaaliaikainen puhelinsynkronointi:** Haastattelut, hakuajat ja muut työnhakuun liittyvät tapahtumat voidaan hallita keskitetysti sekä tilata automaattisesti päivittyvänä ICS-syötteenä suoraan oman puhelimen kalenteriin hälytyksineen ja työpaikkatietoineen.
 - **Analytiikka:** Dashboard kokoaa työnhaun aktiivisuuden ja hakemusten tilanteen visuaaliseksi kokonaisuudeksi, jolloin käyttäjä näkee nopeasti oman työnhakunsa tilanteen.
 - **Toimintaloki:** Käyttäjän tekemät keskeiset muutokset ja tapahtumat voidaan säilyttää osana työnhakuprosessia.
 - **Työnhakuavustaja:** Tekoälyä hyödynnetään konkreettisena apuna työnhaussa. Käyttäjä voi valita tallentamansa työpaikkailmoituksen ja käyttää omaa pohjasaatekirjettään lähtökohtana räätälöidyn hakemuksen muodostamiseen.
@@ -739,7 +759,7 @@ Teknisesti Duunify on rakennettu modernin Next.js- ja React-ekosysteemin ympäri
 
 Arkkitehtuurissa on kiinnitetty erityistä huomiota tietoturvaan. Käyttäjien dataa suojataan Supabasen RLS-säännöillä, palvelin- ja selainpuolen tietokantayhteydet on erotettu toisistaan ja ylläpidon tehokkaampia oikeuksia käyttävät toiminnot pidetään palvelinpuolella. Suojatut reitit ja ylläpito-osio tarkistavat käyttäjän kirjautumisen ja käyttöoikeudet ennen pääsyn sallimista.
 
-Duunify on siten kehittynyt yksinkertaisesta työpaikkailmoitusten keräämisestä kokonaiseksi työnhaun hallintatyökaluksi. Erityisesti työnhakuavustajan kaltaiset ominaisuudet tuovat palveluun uuden tason: tavoitteena ei ole ainoastaan auttaa käyttäjää **seuraamaan työnhakua**, vaan myös **helpottaa itse työnhakutyötä**.
+Duunify on siten kehittynyt yksinkertaisesta työpaikkailmoitusten keräämisestä kokonaiseksi työnhaun hallintatyökaluksi. Erityisesti työnhakuavustajan sekä reaaliaikaisen puhelinkalenterisynkronoinnin kaltaiset ominaisuudet tuovat palveluun uuden tason: tavoitteena ei ole ainoastaan auttaa käyttäjää **seuraamaan työnhakua**, vaan myös **helpottaa itse työnhakutyötä**.
 
 Projektissa yhdistyvät käytännön ongelman ratkaiseminen, moderni web-kehitys, tietokannat, käyttäjähallinta, automaattinen tiedonkeruu, tekoälyn hyödyntäminen sekä tietoturvallinen palvelinarkkitehtuuri. Kokonaisuus toimii samalla käytännön projektina, jossa modernin SaaS-palvelun eri osa-alueet tulevat konkreettisesti tutuiksi.
 
@@ -748,4 +768,3 @@ Tutustu Duunify-projektiin ja lähdekoodiin GitHubissa:
 👉 **[Duunify.com](https://duunify.com)**
 
 👉 **[Github](https://github.com/0xjulius/Duunify)**
-
