@@ -204,6 +204,7 @@ Tämän avulla palvelua voidaan esitellä ilman, että käyttäjän täytyy ensi
 
 ---
 
+
 ## 2. Teknologiapino
 
 ## 2.1 Frontend
@@ -383,7 +384,13 @@ Tämä mahdollistaa sen, että esimerkiksi käyttäjän aktiivisuushistoria ei v
 
 ---
 
-## 6. Demo ja uudelleenkäytettävät komponentit
+## 6. Demo, ilmoitukset ja uudelleenkäytettävät komponentit
+
+### Headerin ilmoitusvalikko ja reaaliaikaisuus
+
+Yläpalkissa (`Header.tsx`) sijaitseva `NotificationsDropdown.tsx` (sekä tarkastelunäkymänä toimiva `NotificationsModal.tsx`) tuo käyttäjän ilmoitukset esiin suoraan työn lomassa. Komponentti hakee käyttäjän ilmoitukset Supabasen `notifications`-taulusta, tilaa uudet `INSERT`-tapahtumat reaaliaikaisesti käyttäjäkohtaisella Realtime-kanavalla ja päivittää näkymän viiveettömästi ilman sivun päivitystä. Käyttäjä voi tarkastella ilmoituksia, merkitä niitä luetuiksi yksitellen tai kerralla sekä poistaa ilmoituksia.
+
+### Demo ja jaetut komponentit
 
 Demo- ja tuotantoympäristö hyödyntävät samoja käyttöliittymäkomponentteja.
 
@@ -749,6 +756,7 @@ Palvelun keskeisiä kokonaisuuksia ovat:
 - **Hakemusten hallinta:** Käyttäjä voi seurata hakemustensa etenemistä yhdestä paikasta, lisätä muistiinpanoja ja liittää mukaan esimerkiksi CV:n ja saatekirjeen.
 - **Kalenteri ja reaaliaikainen puhelinsynkronointi:** Haastattelut, hakuajat ja muut työnhakuun liittyvät tapahtumat voidaan hallita keskitetysti sekä tilata automaattisesti päivittyvänä ICS-syötteenä suoraan oman puhelimen kalenteriin hälytyksineen ja työpaikkatietoineen.
 - **Analytiikka:** Dashboard kokoaa työnhaun aktiivisuuden ja hakemusten tilanteen visuaaliseksi kokonaisuudeksi, jolloin käyttäjä näkee nopeasti oman työnhakunsa tilanteen.
+- **Ilmoitukset:** Yläpalkin ilmoitusvalikko ja erillinen tarkastelumodaali tuovat käyttäjän ilmoitukset esiin reaaliaikaisesti Supabasen Realtime-kanavan kautta sekä mahdollistavat niiden lukemisen ja hallinnan.
 - **Toimintaloki:** Käyttäjän tekemät keskeiset muutokset ja tapahtumat voidaan säilyttää osana työnhakuprosessia.
 - **Työnhakuavustaja:** Tekoälyä hyödynnetään konkreettisena apuna työnhaussa. Käyttäjä voi valita tallentamansa työpaikkailmoituksen ja käyttää omaa pohjasaatekirjettään lähtökohtana räätälöidyn hakemuksen muodostamiseen.
 - **Tietosuoja:** Ennen tekoälykäsittelyä käyttäjän tekstistä poistetaan automaattisesti tunnistettavia henkilötietoja, kuten nimi, sähköposti, puhelinnumero, henkilötunnus ja osoitetietoja. Tavoitteena on välittää tekoälylle ensisijaisesti työn kannalta olennaista osaamis- ja kokemustietoa.
