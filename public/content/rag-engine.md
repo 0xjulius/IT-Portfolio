@@ -27,6 +27,8 @@ Tämä projekti osoittaa, että **omaa dataa ei tarvitse lähettää kolmannen o
 - 💬 **Ehdotetut kysymykset:** latauksen jälkeen LLM luo muutaman esimerkkikysymyksen dokumentin kielellä. "Yhteenveto"-oikotie on aina käytettävissä.
 - 📑 **Rikas Markdown-esitys:** otsikot, listat, lihavoinnit, GitHub-tyyliset taulukot (vaakasuunnassa vieritettävässä kontissa) sekä `[n]`-viitteet laajennettavine lähdeotteineen.
 - 📊 **Admin-lokinäkymä:** tarkastele hakuviiveitä, pistemääriä ja aiempien kyselyjen tarkkoja lähteitä. Avaa mikä tahansa lokirivi nähdäksesi koko vastauksen tai siirtyäksesi sen keskusteluun.
+- 🎨 **Päivitetty tumma käyttöliittymä ja typografia:** syvä tumma monokromaattinen ilme pehmeillä valokiilloilla, `Instrument Serif` -otsikkofontti, `Inter Variable` -leipä- ja käyttöliittymäfontti, `JetBrains Mono` -koodifontti sekä korkearesoluutioisille näytöille (kuten 1440p) skaalattu leipäteksti, lähderivit ja jatkokysymykset.
+- 🖱️ **Hallittu vedä ja pudota -pudotusnäkymä ja latauspalaute:** sisäkkäisten raahaustapahtumien laskenta (`dragDepthRef`), `0.5` sekunnin häivytys (`fade in` ja `fade out`), oikean yläkulman `X`-sulkupainike sekä selkeät lataus- ja vieritystilat.
 
 ![Projektin kuvakaappaus](/images/rag.png)
 > Kuvakaappaus: Käyttöliittymän toiminnallisuuden esittely. Kieli on tällä hetkellä suomeksi.
@@ -117,7 +119,7 @@ Mahdollistaa modernin tekoälyavusteisen tiedonhaun ja päätöksenteon myös t�
 
 | Kerros | Teknologia |
 |---|---|
-| Frontend | React, TypeScript, Vite, Tailwind CSS, Lucide-ikonit, `react-markdown` + `remark-gfm` |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, Lucide-ikonit, `react-markdown` + `remark-gfm`, Framer Motion |
 | Backend | Python, FastAPI, LlamaIndex, Uvicorn |
 | Vektoritietokanta | Qdrant (Docker) |
 | Harva indeksi | FastEmbed BM25 (malli sisällytetty konttikuvaan) |
@@ -141,7 +143,7 @@ Mahdollistaa modernin tekoälyavusteisen tiedonhaun ja päätöksenteon myös t�
 ### Käynnistys Docker Composella
 
 ```bash
-git clone https://github.com/your-username/local-rag-engine.git
+git clone [https://github.com/your-username/local-rag-engine.git](https://github.com/your-username/local-rag-engine.git)
 cd local-rag-engine
 
 # Tarkista backend-palvelun environment-osio tiedostossa docker-compose.yml
@@ -235,6 +237,7 @@ FastAPI tarjoaa interaktiivisen API-dokumentaation osoitteessa `/docs` portissa 
 - [ ] Pistekynnys, jotta heikko konteksti johtaa vastaukseen "En tiedä"
 
 ---
+
 
 ## 📄 Lisenssi
 
