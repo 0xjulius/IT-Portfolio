@@ -396,10 +396,7 @@ export default function ProjectDetail() {
     const heading =
       (Tag) =>
       ({ node, children }) => (
-        <Tag
-          className="scroll-mt-24"
-          id={idByLine[node?.position?.start?.line]}
-        >
+        <Tag className="scroll-mt-24" id="{idByLine[node?.position?.start?.line]}">
           {children}
         </Tag>
       );
@@ -467,6 +464,13 @@ export default function ProjectDetail() {
     const prevTitle = document.title;
     document.title = `${title} | ${AUTHOR}`;
 
+    const canonicalUrl = `${window.location.origin}${PROJECT_ROUTE_BASE}/${project.slug}`;
+    const canonicalEl = document.head.querySelector('link[rel="canonical"]');
+    const prevCanonical = canonicalEl?.getAttribute("href") ?? null;
+    if (canonicalEl) {
+      canonicalEl.setAttribute("href", canonicalUrl);
+    }
+
     const undo = [];
     const setMeta = (attr, key, value) => {
       if (!value) return;
@@ -490,9 +494,10 @@ export default function ProjectDetail() {
 
     setMeta("name", "description", description);
     setMeta("property", "og:type", "article");
+    setMeta("property", "og:site_name", AUTHOR);
     setMeta("property", "og:title", title);
     setMeta("property", "og:description", description);
-    setMeta("property", "og:url", window.location.href);
+    setMeta("property", "og:url", canonicalUrl);
     setMeta("property", "og:image", imageUrl);
     setMeta("name", "twitter:card", "summary_large_image");
     setMeta("name", "twitter:title", title);
@@ -507,7 +512,16 @@ export default function ProjectDetail() {
       headline: title,
       description,
       image: imageUrl || undefined,
-      author: { "@type": "Person", name: AUTHOR },
+      author: {
+        "@type": "Person",
+        "@id": "[https://juliusaalto.com/#person](https://juliusaalto.com/#person)",
+        name: AUTHOR,
+        url: "[https://juliusaalto.com/](https://juliusaalto.com/)",
+      },
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": canonicalUrl,
+      },
       datePublished: published,
       dateModified: project.updatedAt || published,
       inLanguage: isFi ? "fi" : "en",
@@ -517,6 +531,9 @@ export default function ProjectDetail() {
 
     return () => {
       document.title = prevTitle;
+      if (canonicalEl && prevCanonical !== null) {
+        canonicalEl.setAttribute("href", prevCanonical);
+      }
       undo.forEach((fn) => fn());
       script.remove();
     };
@@ -526,10 +543,7 @@ export default function ProjectDetail() {
     return (
       <div className="container mx-auto py-20 text-center text-slate-800">
         <h1 className="text-2xl font-bold">{t.notFoundTitle}</h1>
-        <Link
-          className="text-purple-600 underline mt-4 inline-block font-medium"
-          to="/#projects"
-        >
+        <Link className="text-purple-600 underline mt-4 inline-block font-medium" to="/#projects">
           {t.notFoundBack}
         </Link>
       </div>
