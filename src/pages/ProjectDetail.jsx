@@ -7,6 +7,11 @@ import remarkCitations from "../utils/remarkCitations";
 import { projects } from "../data/projectsData";
 import { useLanguage } from "../context/LanguageContext";
 import AuthorBio from "../components/AuthorBio";
+import {
+  fetchStatsForSlugs,
+  trackArticleView,
+  setArticleLike,
+} from "../utils/postStats";
 
 const AUTHOR = "Julius Aalto";
 const AUTHOR_AVATAR = "/images/pfp.png"; // public/images/pfp.png
@@ -25,6 +30,9 @@ const T = {
     published: "Julkaistu",
     updated: "Päivitetty",
     readTime: "min lukuaika",
+    viewsLabel: "katselukertaa",
+    likeLabel: "Tykkää artikkelista",
+    unlikeLabel: "Poista tykkäys",
     contents: "Sisällys",
     loading: "Ladataan artikkelia...",
     notFoundTitle: "Projektia ei löytynyt",
@@ -45,6 +53,9 @@ const T = {
     published: "Published",
     updated: "Updated",
     readTime: "min read",
+    viewsLabel: "views",
+    likeLabel: "Like article",
+    unlikeLabel: "Unlike article",
     contents: "Contents",
     loading: "Loading case study...",
     notFoundTitle: "Project not found",
@@ -140,6 +151,11 @@ export default function ProjectDetail() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [missing, setMissing] = useState(false);
+
+  // Katselukerrat ja tykkäykset (oletuksena 0, jotta ikonit näkyvät aina)
+  const [views, setViews] = useState(0);
+  const [likes, setLikes] = useState(0);
+  const [liked, setLiked] = useState(false);
 
   const [lightbox, setLightbox] = useState(null); // { src, alt } | null
   const [lightboxVisible, setLightboxVisible] = useState(false);
@@ -248,6 +264,47 @@ export default function ProjectDetail() {
     resetZoom();
   }, [slug]);
 
+  // Tilastot (katselut + tykkäykset) Upstashista oman /api/stats-reitin kautta
+  useEffect(() => {
+    if (!slug) return;
+    let active = true;
+
+    setViews(0);
+    setLikes(0);
+    setLiked(localStorage.getItem(`liked:${slug}`) === "1");
+
+    trackArticleView(slug).then((v) => {
+      if (active && typeof v === "number") {
+        setViews((prev) => Math.max(prev, v));
+      }
+    });
+
+    fetchStatsForSlugs([slug]).then((stats) => {
+      if (!active || !stats?.[slug]) return;
+      if (typeof stats[slug].likes === "number") {
+        setLikes(stats[slug].likes);
+      }
+      if (typeof stats[slug].views === "number") {
+        setViews((prev) => Math.max(prev, stats[slug].views));
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [slug]);
+
+  const handleLike = async () => {
+    if (!slug) return;
+    const nextLiked = !liked;
+    setLiked(nextLiked);
+    localStorage.setItem(`liked:${slug}`, nextLiked ? "1" : "0");
+    setLikes((prev) => Math.max(0, prev + (nextLiked ? 1 : -1)));
+
+    const updated = await setArticleLike(slug, nextLiked);
+    if (typeof updated === "number") setLikes(updated);
+  };
+
   // Sulje lightbox Escapella ja lukitse taustan vieritys auki ollessa
   useEffect(() => {
     if (!lightbox) return;
@@ -341,7 +398,7 @@ export default function ProjectDetail() {
       ({ node, children }) => (
         <Tag
           className="scroll-mt-24"
-          id="{idByLine[node?.position?.start?.line]}"
+          id={idByLine[node?.position?.start?.line]}
         >
           {children}
         </Tag>
@@ -527,7 +584,7 @@ export default function ProjectDetail() {
               {title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500 mb-4">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-slate-500 mb-4">
               <span className="inline-flex items-center gap-2 font-semibold text-slate-700">
                 <img
                   src={AUTHOR_AVATAR}
@@ -565,6 +622,51 @@ export default function ProjectDetail() {
                   </span>
                 </>
               )}
+
+              <span aria-hidden="true">·</span>
+              <span
+                className="inline-flex items-center gap-1 text-slate-600"
+                title={`${views} ${t.viewsLabel}`}
+              >
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                <span>{views}</span>
+              </span>
+
+              <span aria-hidden="true">·</span>
+              <button
+                type="button"
+                onClick={handleLike}
+                aria-pressed={liked}
+                aria-label={liked ? t.unlikeLabel : t.likeLabel}
+                title={liked ? t.unlikeLabel : t.likeLabel}
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold transition active:scale-95 ${
+                  liked
+                    ? "bg-rose-100 text-rose-700 border border-rose-200"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
+                }`}
+              >
+                <svg
+                  className="h-3.5 w-3.5"
+                  viewBox="0 0 24 24"
+                  fill={liked ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <span>{likes}</span>
+              </button>
             </div>
 
             {project.tags?.length > 0 && (

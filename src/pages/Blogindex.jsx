@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { projects } from "../data/projectsData";
 import { useLanguage } from "../context/LanguageContext";
+import { fetchStatsForSlugs } from "../utils/postStats";
 
 // Pidä sama kuin ProjectDetail.jsx:n PROJECT_ROUTE_BASE ja reititys
 const BLOG_ROUTE_BASE = "/blog";
@@ -17,6 +18,8 @@ const T = {
     all: "Kaikki",
     empty: "Ei kirjoituksia tällä rajauksella.",
     posts: "kirjoitusta",
+    viewsLabel: "katselukertaa",
+    likesLabel: "tykkäystä",
   },
   en: {
     back: "← Home",
@@ -26,6 +29,8 @@ const T = {
     all: "All",
     empty: "No posts match this filter.",
     posts: "posts",
+    viewsLabel: "views",
+    likesLabel: "likes",
   },
 };
 
@@ -53,6 +58,7 @@ export default function BlogIndex() {
   const isFi = lang === "fi";
   const t = isFi ? T.fi : T.en;
   const [activeTag, setActiveTag] = useState(null);
+  const [statsBySlug, setStatsBySlug] = useState({});
 
   const formatDate = (iso) =>
     iso
@@ -80,6 +86,21 @@ export default function BlogIndex() {
         .map(({ p }) => p),
     [],
   );
+
+  // Haetaan kaikkien artikkelien katselu- ja tykkäysmäärät yhdellä kutsulla
+  useEffect(() => {
+    let active = true;
+    const slugs = posts.map((p) => p.slug).filter(Boolean);
+    if (slugs.length === 0) return;
+
+    fetchStatsForSlugs(slugs).then((stats) => {
+      if (active && stats) setStatsBySlug(stats);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [posts]);
 
   // Suodatinchipit: tagit, joita on vähintään kahdessa kirjoituksessa
   const topTags = useMemo(() => {
@@ -164,6 +185,8 @@ export default function BlogIndex() {
               {visible.map((p) => {
                 const date = getDate(p);
                 const badge = getBadge(p, isFi);
+                const postViews = statsBySlug[p.slug]?.views ?? 0;
+                const postLikes = statsBySlug[p.slug]?.likes ?? 0;
                 return (
                   <Link
                     key={p.slug}
@@ -198,14 +221,51 @@ export default function BlogIndex() {
                     </div>
 
                     <div className="flex flex-1 flex-col p-5">
-                      {date && (
-                        <time
-                          dateTime={date}
-                          className="text-xs font-medium text-slate-500"
-                        >
-                          {formatDate(date)}
-                        </time>
-                      )}
+                      <div className="flex items-center justify-between gap-2 text-xs font-medium text-slate-500">
+                        {date ? (
+                          <time dateTime={date}>{formatDate(date)}</time>
+                        ) : (
+                          <span />
+                        )}
+
+                        <div className="inline-flex items-center gap-2.5 text-slate-500">
+                          <span
+                            className="inline-flex items-center gap-1"
+                            title={`${postViews} ${t.viewsLabel}`}
+                          >
+                            <svg
+                              className="h-3.5 w-3.5"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              aria-hidden="true"
+                            >
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            <span>{postViews}</span>
+                          </span>
+
+                          <span
+                            className="inline-flex items-center gap-1"
+                            title={`${postLikes} ${t.likesLabel}`}
+                          >
+                            <svg
+                              className="h-3.5 w-3.5"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              aria-hidden="true"
+                            >
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                            <span>{postLikes}</span>
+                          </span>
+                        </div>
+                      </div>
+
                       <h2
                         className={`mt-1 text-lg font-extrabold leading-snug text-slate-900 transition-colors group-hover:text-purple-700 ${CLAMP_2}`}
                       >
