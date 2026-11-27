@@ -415,7 +415,7 @@ FastAPI tarjoaa interaktiivisen API-dokumentaation osoitteessa `/docs` portissa 
 
 ---
 
-## 📚 Lähteet
+## Lähteet
 
 Verkkosivut tarkistettu 27.11.2026. Viitenumerot ovat tekstissä esiintymisjärjestyksessä.
 
