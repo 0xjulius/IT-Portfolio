@@ -15,30 +15,14 @@ export async function fetchStatsForSlugs(slugs) {
 export async function trackArticleView(slug) {
   if (!slug) return null;
 
-  const sessionKey = `viewed:${slug}`;
-  if (sessionStorage.getItem(sessionKey)) {
-    const stats = await fetchStatsForSlugs([slug]);
-    return stats[slug]?.views ?? null;
-  }
-  sessionStorage.setItem(sessionKey, "1");
-
-  const payload = JSON.stringify({ slug, action: "view" });
-
-  if (navigator.sendBeacon) {
-    const blob = new Blob([payload], { type: "application/json" });
-    navigator.sendBeacon(STATS_URL, blob);
-    const stats = await fetchStatsForSlugs([slug]);
-    return stats[slug]?.views ?? null;
-  }
-
   const res = await fetch(STATS_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: payload,
+    body: JSON.stringify({ slug, action: "view" }),
   });
   if (!res.ok) return null;
   const data = await res.json();
-  return data.views ?? null;
+  return data.views ?? data.stats?.[slug]?.views ?? null;
 }
 
 export async function setArticleLike(slug, shouldLike) {
@@ -54,5 +38,5 @@ export async function setArticleLike(slug, shouldLike) {
   });
   if (!res.ok) return null;
   const data = await res.json();
-  return data.likes ?? null;
+  return data.likes ?? data.stats?.[slug]?.likes ?? null;
 }
