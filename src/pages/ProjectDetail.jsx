@@ -1,5 +1,5 @@
 // src/pages/ProjectDetail.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -13,6 +13,7 @@ const AUTHOR_AVATAR = "/images/pfp.png"; // public/images/pfp.png
 // Polku, jolla projektisivut avautuvat reitityksessäsi (esim. /projects/:slug).
 // Muuta tämä, jos reittisi on eri.
 const PROJECT_ROUTE_BASE = "/blog";
+const LIGHTBOX_FADE_MS = 200;
 
 // Käännökset yhdessä paikassa
 const T = {
@@ -33,6 +34,8 @@ const T = {
     prev: "Edellinen projekti",
     next: "Seuraava projekti",
     imageAlt: "Projektin kansikuva:",
+    closeLightbox: "Sulje kuva",
+    zoomHint: "Klikkaa suurentaaksesi",
   },
   en: {
     back: "← Back to Projects",
@@ -51,6 +54,8 @@ const T = {
     prev: "Previous project",
     next: "Next project",
     imageAlt: "Project cover image:",
+    closeLightbox: "Close image",
+    zoomHint: "Click to enlarge",
   },
 };
 
@@ -136,6 +141,68 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true);
   const [missing, setMissing] = useState(false);
 
+  const [lightbox, setLightbox] = useState(null); // { src, alt } | null
+  const [lightboxVisible, setLightboxVisible] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+
+  const dragStartRef = useRef({
+    x: 0,
+    y: 0,
+    originX: 0,
+    originY: 0,
+    moved: false,
+  });
+  const closeTimeoutRef = useRef(null);
+  const openRafRef = useRef(null);
+
+  const resetZoom = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+    setDragging(false);
+  };
+
+  const openLightbox = (data) => {
+    if (closeTimeoutRef.current) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    if (openRafRef.current) {
+      window.cancelAnimationFrame(openRafRef.current);
+      openRafRef.current = null;
+    }
+    resetZoom();
+    setLightbox(data);
+    setLightboxVisible(false);
+    openRafRef.current = window.requestAnimationFrame(() => {
+      openRafRef.current = window.requestAnimationFrame(() => {
+        setLightboxVisible(true);
+      });
+    });
+  };
+
+  const closeLightbox = () => {
+    if (!lightbox) return;
+    setLightboxVisible(false);
+    setDragging(false);
+    if (closeTimeoutRef.current) {
+      window.clearTimeout(closeTimeoutRef.current);
+    }
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setLightbox(null);
+      resetZoom();
+      closeTimeoutRef.current = null;
+    }, LIGHTBOX_FADE_MS);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) window.clearTimeout(closeTimeoutRef.current);
+      if (openRafRef.current) window.cancelAnimationFrame(openRafRef.current);
+    };
+  }, []);
+
   const projectIndex = projects.findIndex((p) => p.slug === slug);
   const project = projectIndex >= 0 ? projects[projectIndex] : undefined;
   const prevProject = projectIndex > 0 ? projects[projectIndex - 1] : null;
@@ -172,7 +239,35 @@ export default function ProjectDetail() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (closeTimeoutRef.current) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setLightbox(null);
+    setLightboxVisible(false);
+    resetZoom();
   }, [slug]);
+
+  // Sulje lightbox Escapella ja lukitse taustan vieritys auki ollessa
+  useEffect(() => {
+    if (!lightbox) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") {
+        closeLightbox();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightbox]);
 
   // Haetaan markdown-artikkeli
   useEffect(() => {
@@ -239,14 +334,14 @@ export default function ProjectDetail() {
     return Math.max(1, Math.ceil(words / 200));
   }, [content, missing]);
 
-  // Markdown-komponentit: ankkurit otsikoille, vierittyvät taulukot ja lähdeviitteiden pehmeä vieritys
+  // Markdown-komponentit: ankkurit otsikoille, klikattavat kuvat, vierittyvät taulukot ja lähdeviitteiden pehmeä vieritys
   const mdComponents = useMemo(() => {
     const heading =
       (Tag) =>
       ({ node, children }) => (
         <Tag
-          id={idByLine[node?.position?.start?.line]}
           className="scroll-mt-24"
+          id="{idByLine[node?.position?.start?.line]}"
         >
           {children}
         </Tag>
@@ -254,6 +349,20 @@ export default function ProjectDetail() {
     return {
       h2: heading("h2"),
       h3: heading("h3"),
+      img: ({ node, src, alt, className = "", ...props }) => {
+        if (!src) return null;
+        return (
+          <img
+            src={src}
+            alt={alt || ""}
+            loading="lazy"
+            onClick={() => openLightbox({ src, alt: alt || "" })}
+            title={t.zoomHint}
+            className={`cursor-zoom-in rounded-xl border border-slate-200 shadow-sm transition-transform duration-200 hover:scale-[1.01] ${className}`}
+            {...props}
+          />
+        );
+      },
       table: ({ node, ...props }) => (
         <div className="overflow-x-auto my-8">
           <table {...props} />
@@ -291,7 +400,8 @@ export default function ProjectDetail() {
         );
       },
     };
-  }, [idByLine]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idByLine, t.zoomHint]);
 
   // SEO: title, description, Open Graph ja BlogPosting-JSON-LD ilman lisäkirjastoja
   useEffect(() => {
@@ -335,7 +445,7 @@ export default function ProjectDetail() {
     const script = document.createElement("script");
     script.type = "application/ld+json";
     script.text = JSON.stringify({
-      "@context": "https://schema.org",
+      "@context": "[https://schema.org](https://schema.org)",
       "@type": "BlogPosting",
       headline: title,
       description,
@@ -360,8 +470,8 @@ export default function ProjectDetail() {
       <div className="container mx-auto py-20 text-center text-slate-800">
         <h1 className="text-2xl font-bold">{t.notFoundTitle}</h1>
         <Link
-          to="/#projects"
           className="text-purple-600 underline mt-4 inline-block font-medium"
+          to="/#projects"
         >
           {t.notFoundBack}
         </Link>
@@ -472,11 +582,20 @@ export default function ProjectDetail() {
           </header>
 
           {project.image && (
-            <div className="order-1 lg:order-2 relative -mx-4 sm:-mx-8 lg:-mx-8 xl:-mx-16 mb-6 lg:mb-10 aspect-[4/3] sm:aspect-[16/9] overflow-hidden rounded-none lg:rounded-2xl bg-slate-100 border-y lg:border border-slate-200 shadow-lg">
+            <div
+              onClick={() =>
+                openLightbox({
+                  src: project.image,
+                  alt: `${t.imageAlt} ${title}`,
+                })
+              }
+              title={t.zoomHint}
+              className="group order-1 lg:order-2 relative -mx-4 sm:-mx-8 lg:-mx-8 xl:-mx-16 mb-6 lg:mb-10 aspect-[4/3] sm:aspect-[16/9] overflow-hidden rounded-none lg:rounded-2xl bg-slate-100 border-y lg:border border-slate-200 shadow-lg cursor-zoom-in"
+            >
               <img
                 src={project.image}
                 alt={`${t.imageAlt} ${title}`}
-                className="absolute inset-0 w-full h-full object-cover object-center"
+                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.01]"
               />
               {/* Pieni blurri bannerin alaosaan */}
               <div
@@ -544,6 +663,7 @@ export default function ProjectDetail() {
               </ReactMarkdown>
             </article>
           )}
+
           {/* Kirjoittajan esittelylaatikko */}
           <AuthorBio />
 
@@ -571,13 +691,119 @@ export default function ProjectDetail() {
                   isFi={isFi}
                   state={routerLocation.state}
                   align="right"
-                  className="col-start-2"
+                  className={!prevProject ? "col-start-2" : ""}
                 />
               )}
             </nav>
           )}
         </div>
       </main>
+
+      {/* Lightbox-modal fade-in ja fade-out -animaatiolla */}
+      {lightbox && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={lightbox.alt || t.closeLightbox}
+          onClick={closeLightbox}
+          onPointerMove={(e) => {
+            if (!dragging || zoom <= 1) return;
+            const dx = e.clientX - dragStartRef.current.x;
+            const dy = e.clientY - dragStartRef.current.y;
+            if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+              dragStartRef.current.moved = true;
+            }
+            setPan({
+              x: dragStartRef.current.originX + dx,
+              y: dragStartRef.current.originY + dy,
+            });
+          }}
+          onPointerUp={() => setDragging(false)}
+          className={`fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-4 sm:p-8 backdrop-blur-sm select-none transition-opacity duration-200 ease-out ${
+            lightboxVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="fixed top-4 right-4 sm:top-6 sm:right-6 z-10 flex items-center gap-2"
+          >
+            <button
+              type="button"
+              onClick={() => {
+                if (zoom > 1) {
+                  resetZoom();
+                } else {
+                  setZoom(2);
+                }
+              }}
+              className="flex h-11 px-4 items-center justify-center rounded-full bg-white/15 text-sm font-bold text-white transition hover:bg-white/25 focus:outline-none"
+            >
+              {zoom > 1 ? "200% → 100%" : "100% → 200%"}
+            </button>
+
+            <button
+              type="button"
+              onClick={closeLightbox}
+              aria-label={t.closeLightbox}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-2xl font-bold text-white transition hover:bg-white/25 focus:outline-none"
+            >
+              &times;
+            </button>
+          </div>
+
+          <figure
+            onClick={(e) => e.stopPropagation()}
+            className={`flex max-h-[90vh] max-w-6xl flex-col items-center overflow-hidden transition-all duration-200 ease-out ${
+              lightboxVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            }`}
+          >
+            <img
+              src={lightbox.src}
+              alt={lightbox.alt}
+              draggable={false}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                if (zoom <= 1) return;
+                setDragging(true);
+                dragStartRef.current = {
+                  x: e.clientX,
+                  y: e.clientY,
+                  originX: pan.x,
+                  originY: pan.y,
+                  moved: false,
+                };
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (dragStartRef.current.moved) {
+                  dragStartRef.current.moved = false;
+                  return;
+                }
+                if (zoom > 1) {
+                  resetZoom();
+                } else {
+                  setZoom(2);
+                }
+              }}
+              style={{
+                transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})`,
+              }}
+              className={`max-h-[82vh] w-auto max-w-full rounded-lg object-contain shadow-2xl transition-transform duration-150 ${
+                zoom > 1
+                  ? dragging
+                    ? "cursor-grabbing"
+                    : "cursor-grab"
+                  : "cursor-zoom-in"
+              }`}
+            />
+            {lightbox.alt && (
+              <figcaption className="mt-3 text-center text-sm text-slate-200">
+                {lightbox.alt}
+              </figcaption>
+            )}
+          </figure>
+        </div>
+      )}
     </div>
   );
 }
