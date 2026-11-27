@@ -354,108 +354,122 @@ export default function ProjectDetail() {
 
   // Poimitaan H2/H3-otsikot: ankkurit sisällysluetteloa varten.
   // Koodilohkojen sisällä olevia #-rivejä ei lasketa otsikoiksi.
-  const { tocItems, idByLine } = useMemo(() => {
-    const items = [];
-    const ids = {};
-    const used = {};
-    let inFence = false;
+ const { tocItems, idByLine } = useMemo(() => {
+   const items = [];
+   const ids = {};
+   const used = {};
+   let inFence = false;
 
-    content.split(/\r?\n/).forEach((line, i) => {
-      if (/^\s*(```|~~~)/.test(line)) {
-        inFence = !inFence;
-        return;
-      }
-      if (inFence) return;
+   content.split(/\r?\n/).forEach((line, i) => {
+     if (/^\s*(```|~~~)/.test(line)) {
+       inFence = !inFence;
+       return;
+     }
+     if (inFence) return;
 
-      const m = /^(#{2,3})\s+(.+?)\s*#*\s*$/.exec(line);
-      if (!m) return;
+     const m = /^(#{2,3})\s+(.+?)\s*#*\s*$/.exec(line);
+     if (!m) return;
 
-      const text = m[2]
-        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-        .replace(/[`*_]/g, "")
-        .trim();
-      const base = slugify(text) || "osio";
-      used[base] = (used[base] || 0) + 1;
-      const id = used[base] > 1 ? `${base}-${used[base]}` : base;
+     const text = m[2]
+       .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+       .replace(/[`*_]/g, "")
+       .trim();
+     const base = slugify(text) || "osio";
+     used[base] = (used[base] || 0) + 1;
+     const id = used[base] > 1 ? `${base}-${used[base]}` : base;
 
-      ids[i + 1] = id; // react-markdownin rivinumerot alkavat 1:stä
-      if (m[1].length === 2) items.push({ id, text });
-    });
+     ids[i + 1] = id; // react-markdownin rivinumerot alkavat 1:stä
+     if (m[1].length === 2) items.push({ id, text });
+   });
 
-    return { tocItems: items, idByLine: ids };
-  }, [content]);
+   return { tocItems: items, idByLine: ids };
+ }, [content]);
 
-  const readingMinutes = useMemo(() => {
-    if (missing || !content.trim()) return null;
-    const words = content.trim().split(/\s+/).length;
-    return Math.max(1, Math.ceil(words / 200));
-  }, [content, missing]);
+ useEffect(() => {
+   if (loading || !routerLocation.hash) return;
 
+   const targetId = decodeURIComponent(routerLocation.hash.slice(1));
+   const timer = window.setTimeout(() => {
+     const el = document.getElementById(targetId);
+     if (el) {
+       el.scrollIntoView({ behavior: "smooth", block: "start" });
+     }
+   }, 50);
+
+   return () => window.clearTimeout(timer);
+ }, [loading, routerLocation.hash, idByLine]);
+
+ const readingMinutes = useMemo(() => {
+   if (missing || !content.trim()) return null;
+   const words = content.trim().split(/\s+/).length;
+   return Math.max(1, Math.ceil(words / 200));
+ }, [content, missing]);
+  
   // Markdown-komponentit: ankkurit otsikoille, klikattavat kuvat, vierittyvät taulukot ja lähdeviitteiden pehmeä vieritys
-  const mdComponents = useMemo(() => {
-    const heading =
-      (Tag) =>
-      ({ node, children }) => (
-        <Tag className="scroll-mt-24" id="{idByLine[node?.position?.start?.line]}">
-          {children}
-        </Tag>
+const mdComponents = useMemo(() => {
+  const heading =
+    (Tag) =>
+    ({ node, children }) => (
+      <Tag className="scroll-mt-24" id={idByLine[node?.position?.start?.line]}>
+        {children}
+      </Tag>
+    );
+  return {
+    h2: heading("h2"),
+    h3: heading("h3"),
+    img: ({ node, src, alt, className = "", ...props }) => {
+      if (!src) return null;
+      return (
+        <img
+          src={src}
+          alt={alt || ""}
+          loading="lazy"
+          onClick={() => openLightbox({ src, alt: alt || "" })}
+          title={t.zoomHint}
+          className={`cursor-zoom-in rounded-xl border border-slate-200 shadow-sm transition-transform duration-200 hover:scale-[1.01] ${className}`}
+          {...props}
+        />
       );
-    return {
-      h2: heading("h2"),
-      h3: heading("h3"),
-      img: ({ node, src, alt, className = "", ...props }) => {
-        if (!src) return null;
+    },
+    table: ({ node, ...props }) => (
+      <div className="overflow-x-auto my-8">
+        <table {...props} />
+      </div>
+    ),
+    // Lähdeviitteet (#ref-n / #cite-n): vieritä pehmeästi ja korosta kohde hetkeksi
+    a: ({ node, href, children, ...props }) => {
+      const isCitation =
+        href?.startsWith("#ref-") || href?.startsWith("#cite-");
+      if (!isCitation) {
         return (
-          <img
-            src={src}
-            alt={alt || ""}
-            loading="lazy"
-            onClick={() => openLightbox({ src, alt: alt || "" })}
-            title={t.zoomHint}
-            className={`cursor-zoom-in rounded-xl border border-slate-200 shadow-sm transition-transform duration-200 hover:scale-[1.01] ${className}`}
-            {...props}
-          />
-        );
-      },
-      table: ({ node, ...props }) => (
-        <div className="overflow-x-auto my-8">
-          <table {...props} />
-        </div>
-      ),
-      // Lähdeviitteet (#ref-n / #cite-n): vieritä pehmeästi ja korosta kohde hetkeksi
-      a: ({ node, href, children, ...props }) => {
-        const isCitation =
-          href?.startsWith("#ref-") || href?.startsWith("#cite-");
-        if (!isCitation) {
-          return (
-            <a href={href} {...props}>
-              {children}
-            </a>
-          );
-        }
-        return (
-          <a
-            href={href}
-            {...props}
-            onClick={(e) => {
-              const target = document.getElementById(href.slice(1));
-              if (!target) return;
-              e.preventDefault();
-              target.scrollIntoView({ behavior: "smooth", block: "center" });
-              target.classList.add("bg-amber-100");
-              window.setTimeout(
-                () => target.classList.remove("bg-amber-100"),
-                1600,
-              );
-            }}
-          >
+          <a href={href} {...props}>
             {children}
           </a>
         );
-      },
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idByLine, t.zoomHint]);
+      }
+      return (
+        <a
+          href={href}
+          {...props}
+          onClick={(e) => {
+            const target = document.getElementById(href.slice(1));
+            if (!target) return;
+            e.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+            target.classList.add("bg-amber-100");
+            window.setTimeout(
+              () => target.classList.remove("bg-amber-100"),
+              1600,
+            );
+          }}
+        >
+          {children}
+        </a>
+      );
+    },
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [idByLine, t.zoomHint]);
 
   // SEO: title, description, Open Graph ja BlogPosting-JSON-LD ilman lisäkirjastoja
   useEffect(() => {
