@@ -58,7 +58,7 @@ export const projectsData = [
     slug: "rag-engine",
     hasArticle: true,
     publishedAt: "2026-10-21",
-    updatedAt: "2026-10-22",
+    updatedAt: "2026-11-27",
     tags: [
       "TypeScript",
       "AI",
