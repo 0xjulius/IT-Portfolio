@@ -9,83 +9,58 @@ Esitä kysymyksiä omista PDF-dokumenteistasi ja saa vastaukset lähdeviitteinee
 > **"Tietosuoja on suurin yksittäinen este tekoälyn käyttöönotolle yrityksissä Euroopassa ja Suomessa."**
 > Yritysten on hallittava, suojattava ja omistettava datansa täysin itse. **Local RAG Engine** vastaa tähän haasteeseen: se on täysin paikallinen RAG-alusta (Retrieval-Augmented Generation) ilman pilvirajapintoja, telemetriaa tai internetyhteyden tarvetta ajon aikana.
 
-## 🎯 Motivaatio: miksi paikallinen RAG?
+## 🎯 Miksi paikallinen RAG?
 
-Pilvipohjaiset LLM-rajapinnat ovat nopeita ottaa käyttöön, mutta eurooppalaiset yritykset, julkishallinto sekä juridiset ja rahoitusalan organisaatiot kohtaavat GDPR-velvoitteita, vaatimustenmukaisuuden haasteita ja IP-vuotojen riskejä, kun sisäisiä dokumentteja lähetetään ulkoisiin palveluihin.
+Yritysten dokumentit sisältävät usein tietoa, jota ei voi lähettää ulkopuolisiin tekoälypalveluihin: sopimuksia, potilastietoja, talousraportteja, lähdekoodia ja sisäisiä ohjeistuksia.
 
-Tämä projekti osoittaa, että **omaa dataa ei tarvitse lähettää kolmannen osapuolen palveluun, jotta voi rakentaa modernin tekoälyavustajan.** Paikallisilla malleilla, vektoritietokannalla ja hybridihaulla organisaatio pitää datansa omalla laitteistollaan tai yksityisessä infrastruktuurissaan.
+Riski ei ole teoreettinen. Samsung kielsi työntekijöiltään ChatGPT:n käytön vuonna 2023 sen jälkeen, kun sisäistä lähdekoodia oli ladattu palveluun. Ciscon vuoden 2024 tutkimuksessa puolestaan 27 % organisaatioista kertoi rajoittaneensa generatiivisen tekoälyn käyttöä tietosuoja- ja tietoturvasyistä [1][2].
 
----
+**Local RAG Engine ratkaisee tämän ongelman pitämällä koko tiedonkäsittelyketjun organisaation omassa hallinnassa.**
 
-## 🔭 Miksi paikallinen tekoäly on tulevaisuus – ja missä sen rajat ovat
+PDF-dokumentit käsitellään paikallisesti, niiden sisältö indeksoidaan Qdrantiin ja paikallinen kielimalli muodostaa vastaukset haettujen dokumenttiosumien perusteella. Käyttäjä saa vastaukset lähdeviitteineen ilman, että dokumentteja tarvitsee lähettää kaupalliseen pilvipalveluun.
 
-Alle on koottu ulkopuolisia lähteitä, jotka tukevat paikallisen tekoälyn tarvetta. Viitenumerot (esim. [1]) vievät sivun lopun lähdeluetteloon. Mukana on myös vastaväitteitä, koska rehellinen kuva on hyödyllisempi kuin pelkkä mainos.
+Ratkaisu soveltuu erityisesti ympäristöihin, joissa tietojen sijainti, salassapito ja infrastruktuurin hallinta ovat keskeisiä vaatimuksia.
 
-### Datan vuotaminen on todellinen riski
+## ✨ Miksi paikallinen tekoäly on ajankohtainen?
 
-**Samsung 2023.** Yhtiön insinöörit latasivat sisäistä lähdekoodia ChatGPT:hen, minkä jälkeen Samsung kielsi työntekijöitä käyttämästä ChatGPT:n kaltaisia työkaluja työssään. Fortunen mukaan yksi työntekijä pyysi apua viallisen tietokannan korjaamiseen ja latasi samalla luottamuksellista koodia, ja toinen jakoi kokonaisen palaverin saadakseen siitä muistion. Samsung lupasi samalla rakentaa omat työkalut käännöksiin ja tiivistämiseen [1].
+Paikallisen tekoälyn kehitystä tukee kolme merkittävää muutosta.
 
-> Samsungin muistiossa todettiin: ”There are growing concerns about security risks presented by generative A.I.” [1]
+**1. Tietosuoja ja datan hallinta**
 
-**Cisco 2024.** Ciscon tietosuojatutkimukseen vastasi 2 600 tietosuoja- ja tietoturva-ammattilaista. Heistä 27 % oli kieltänyt generatiivisen tekoälyn käytön vähintään väliaikaisesti, 48 % myönsi syöttäneensä yrityksen ei-julkisia tietoja tekoälytyökaluihin ja 68 % pelkäsi tietojen päätyvän julkisuuteen tai kilpailijoille [2].
+Euroopan tietosuojaneuvoston joulukuussa 2024 julkaisema lausunto käsittelee tekoälymallien ja GDPR:n suhdetta. Se korostaa, ettei tekoälyn käyttö poista henkilötietojen käsittelyyn liittyviä velvoitteita [3].
 
-> Ciscon lakiasioista vastaava johtaja Dev Stahlkopf: ”Organizations see GenAI as a fundamentally different technology with novel challenges to consider” [2]
+Myös suomalaisessa julkisen sektorin keskustelussa on nostettu esiin mahdollisuus hyödyntää paikallisia tekoälyratkaisuja kaupallisten pilvipalveluiden rinnalla. Erityisesti arkaluonteisen tiedon käsittely voi edellyttää omassa hallinnassa olevaa infrastruktuuria [5].
 
-**Sääntely.** Euroopan tietosuojaneuvosto (EDPB) antoi joulukuussa 2024 lausunnon, joka käsittelee sitä, milloin tekoälymalli voi olla anonyymi, voiko oikeutettu etu toimia käsittelyperusteena ja mitä tapahtuu, jos malli on kehitetty laittomasti käsitellyillä henkilötiedoilla. Lausunnon mukaan laiton käsittely kehitysvaiheessa voi vaikuttaa mallin käyttöönoton lainmukaisuuteen, ellei mallia ole asianmukaisesti anonymisoitu [3]. Tämä on tämän projektin tulkinta, ei EDPB:n johtopäätös: kun data ja malli pysyvät omassa hallinnassa, käsittelyn perusteet ja sijainti on helpompi osoittaa.
+Paikallinen ratkaisu ei kuitenkaan automaattisesti takaa tietosuojaa. Myös verkkoyhteydet, telemetria, ohjelmistojen asetukset ja käyttöoikeudet on tarkistettava [4].
 
-**Suomalainen näkökulma.** CGI:n asiantuntijat muistuttavat, että tekoälyä voi hyödyntää myös ilman kaupallisia pilvipalveluita ja että erityisiä henkilö- tai terveystietoja käsiteltäessä ratkaisu voi olla tuotava paikallisiin konesaleihin. He suosittelevat kuitenkin yhdistämään kaupallisen pilven ja paikalliset ratkaisut parhaalla mahdollisella tavalla [5].
+**2. Pienemmät kielimallit ovat kehittyneet**
 
-> CGI:n blogissa tiivistetään: ”Pilvipalvelut ovat hyödyllisiä tekoälymallien kouluttamiseen, mutta tuotantokäytössä sensitiivinen tieto voi vaatia paikallisia ratkaisuja.” [5]
+Kaikkiin tehtäviin ei tarvita suurinta mahdollista kielimallia. Gartner ennusti vuonna 2025, että organisaatiot käyttäisivät vuoteen 2027 mennessä pieniä, tehtäväkohtaisia malleja kolme kertaa enemmän kuin yleiskäyttöisiä suuria kielimalleja [6].
 
-**Varoitus: paikallinen ei aina tarkoita paikallista.** MTV Uutisten mukaan tekoälytietokoneet voivat periaatteessa tarjota verkkoversiota parempaa tietosuojaa, koska laskenta tapahtuu omalla koneella, mutta tietosuojavaltuutettu kehottaa tarkistamaan ehdot ja asetukset [4].
+Tämä on tärkeää paikallisessa RAG-järjestelmässä: dokumenttien hakeminen, tiivistäminen ja kysymyksiin vastaaminen voidaan toteuttaa myös paikallisesti ajettavilla malleilla.
 
-> Tietosuojavaltuutettu muistutti: ”On hyvä varmistua siitä, onko ratkaisu aidosti paikallinen.” [4]
+**3. Yritykset haluavat enemmän hallintaa tekoälyinfrastruktuuriinsa**
 
-Siksi tämän projektin verkkoraja on dokumentoitu erikseen kohdassa *Tietoturvaraja ja tuotantokäyttö*.
+Broadcomin vuoden 2026 Private Cloud Outlook -raportissa 56 % yrityksistä ilmoitti ajavansa tai suunnittelevansa ajavansa tuotantokäytön tekoälypäättelyä yksityisessä pilvessä [10].
 
-### Pienet ja erikoistuneet mallit riittävät yhä useammin
+Schneider Electricin ja Omdian marraskuussa 2026 julkaisemassa tutkimuksessa 55 % vastaajista suosi yrityksen omistamaa, omissa tiloissa olevaa tekoälyinfrastruktuuria. Tietosuoja ja tietoturva olivat tärkeimpiä perusteluja [11].
 
-Gartner ennustaa huhtikuussa 2025 julkaistussa tiedotteessaan, että vuoteen 2027 mennessä organisaatiot käyttävät pieniä, tehtäväkohtaisia tekoälymalleja vähintään kolme kertaa enemmän kuin yleiskäyttöisiä suuria kielimalleja [6].
+Luvut eivät tarkoita, että kaikki tekoäly pitäisi siirtää paikalliseksi. Ne kuitenkin osoittavat, että oman infrastruktuurin merkitys kasvaa.
 
-> Gartnerin analyytikko Sumit Agarwal perustelee: ”Small, task-specific models provide quicker responses and use less computational power” [6]
+## ⚖️ Paikallisen tekoälyn rajat
 
-NVIDIAn tutkijat esittivät kesäkuussa 2025 julkaistussa kannanottoartikkelissa, että pienet kielimallit ovat riittävän tehokkaita, toiminnallisesti sopivampia ja taloudellisempia agenttimaisiin järjestelmiin [7]. Artikkeli on asemapaperi eikä uusi mittaus, joten se kuvaa tutkijoiden näkemystä eikä todistetta.
+Paikallinen ratkaisu ei ole automaattisesti paras vaihtoehto jokaiseen käyttötarkoitukseen.
 
-> Artikkelin väite on: ”small, rather than large, language models are the future of agentic AI” [7]
+- **Laitteistovaatimukset:** Suuremmat kielimallit tarvitsevat huomattavasti RAM-muistia ja GPU-muistia. Pienempi malli voi olla käytännöllisempi vaihtoehto.
+- **Mallien suorituskyky:** Avoimet mallit ovat kehittyneet nopeasti, mutta parhaat suljetut mallit voivat edelleen olla tietyissä tehtävissä parempia [8].
+- **Ylläpito:** Organisaatio vastaa itse mallien, tietokantojen, käyttöoikeuksien ja infrastruktuurin ylläpidosta.
+- **Pilven ja paikallisen yhdistäminen:** Kaikkea tekoälykuormaa ei tarvitse ajaa paikallisesti. Arkaluonteiset dokumentit voidaan käsitellä omassa ympäristössä ja muut tehtävät tarvittaessa pilvessä.
 
-### Avoimet mallit pysyvät lähellä suljettuja
+Googlen vuonna 2026 esittelemät paikallisesti ajettavat Gemma-mallit osoittavat myös, kuinka paikallisen tekoälyn käyttömahdollisuudet laajenevat tavallisiin tietokoneisiin [12].
 
-Stanfordin AI Index 2025 raportoi Chatbot Arena -vertailussa, että johtava suljettu malli oli tammikuussa 2024 parempi kuin paras avoimen painon malli 8,04 prosenttia. Helmikuuhun 2025 mennessä ero oli kaventunut 1,70 prosenttiin [8]. Vuoden 2026 raportin mukaan ero kasvoi uudelleen: HPCwiren AIwiren mukaan ero parhaan suljetun ja parhaan avoimen mallin välillä oli 0,3 % elokuussa 2024 ja 3,3 % maaliskuussa 2026 [9]. Ero on siis kasvanut, mutta se on yhä muutaman prosentin luokkaa.
+**Local RAG Engine keskittyy yhteen selkeään käyttötarkoitukseen: organisaation omien dokumenttien turvalliseen, lähteistettyyn ja paikalliseen tekoälyavusteiseen käsittelyyn.**
 
-### Organisaatiot siirtävät tekoälyä omaan hallintaansa
-
-**Broadcom, kesäkuu 2026.** Yhtiön Private Cloud Outlook 2026 -raportin mukaan 56 % yrityksistä ajaa tai suunnittelee ajavansa tuotantokäytön päättelyn yksityisessä pilvessä, kun julkisessa pilvessä vastaava osuus oli 41 %. Julkisen pilven osuus laski vuodessa 15 prosenttiyksikköä (56 %:sta 41 %:iin). Neljä viidestä IT-johtajasta kertoi geopolitiikan vaikuttavan IT-strategiaansa, ja ensimmäistä kertaa datan sijaintiin ja suvereniteettiin liittyvät vaatimukset (54 %) ohittivat lainkäyttöaluekohtaisen vaatimustenmukaisuuden (51 %) [10].
-
-> Broadcomin VMware Cloud Foundation -yksikön varatoimitusjohtaja Prashanth Shenoy: ”enterprises increasingly prefer private cloud for production AI” [10]
-
-Huomaa kaksi rajausta: Broadcom myy yksityisen pilven ohjelmistoja, joten kysely ei ole puolueeton, ja *yksityinen pilvi* tarkoittaa omassa hallinnassa olevaa infrastruktuuria eikä välttämättä yksittäisen koneen paikallista mallia [10].
-
-**Schneider Electric ja Omdia, marraskuu 2026.** Tutkimuksen mukaan 55 % vastaajista suosi yrityksen omistamaa, omissa tiloissa olevaa infrastruktuuria tekoälylle. Tärkeimmät syyt olivat tietosuoja ja tietoturva (30 %), luotettavuusvaatimukset (22 %) ja sääntelyn noudattaminen (21 %). Silti 33 % mainitsi esteeksi sisäisen osaamisen puutteen. Tutkimuksen tilasi Schneider Electric, joka myy energia- ja infrastruktuuriteknologiaa, ja tulokset kuvaavat kyselyyn vastanneiden mielipiteitä eivätkä koko markkinaa [11].
-
-### Laitteet ja avoimen lähdekoodin työkalut kypsyvät
-
-Google julkaisi kesäkuussa 2026 työkaluja, joilla agenttimaisia työnkulkuja voi ajaa paikallisesti 12 miljardin parametrin Gemma 4 12B -mallilla tavallisilla koneilla. Lisäksi LiteRT-LM-komentorivityökalu voi toimia paikallisena LLM-palvelimena ja tarjota mallin tavallisille työkaluille paikallisen rajapinnan kautta [12].
-
-> Google totesi blogikirjoituksessaan: ”Your data stays on your device” [12]
-
-Avoimen lähdekoodin puolella Nous Researchin MIT-lisensioitu Hermes Agent -agentti tukee muun muassa omaa rajapintaa, ja projektilla oli marraskuussa 2026 yli 260 000 GitHub-tähteä [13]. Tähtimäärä kertoo kiinnostuksesta, ei laadusta.
-
-> Hermes Agentin esittelyssä luvataan: ”Use any model you want” [13]
-
-### Rajat ja vastaväitteet
-
-- **Paikallinen ei korvaa pilveä kokonaan.** InfoWorldin haastattelema TechInsightsin analyytikko Anand Joshi ei odota paikallisen agenttitekoälyn korvaavan pilvitekoälyä, mutta arvioi sen vievän siitä osan. Hänen mukaansa tietosuojaa tai tiukkaa vasteaikaa vaativat käyttötapaukset siirtyvät paikalliseen ensin ja muut seuraavien 2–3 vuoden aikana [12].
-- **Laitteisto maksaa.** Gartnerin analyytikko Rishi Padhi huomauttaa, että Gemma 4 12B -kaltainen optimoitu malli vaatii noin 16 Gt yhteistä muistia tai VRAMia tavallisten sovellusten rinnalla, ja monissa yrityskannettavissa ei ole siihen riittävästi tehoa. Hänen mukaansa siirtymä muuttaa kulut käyttökustannuksista (OpEx) investoinneiksi (CapEx) [12].
-- **RAG-järjestelmien sijoittumisesta ei ole yksimielisyyttä.** Padhin mukaan koodin generointi ja paikallisten tiedostojen analyysi voivat siirtyä työntekijöiden laitteille, mutta yrityksen laajuiset RAG-järjestelmät ja monimutkaiset työnkulut todennäköisesti pysyvät pilvessä [12]. Local RAG Engine on tarkoitettu tilanteisiin, joissa dokumentit eivät saa poistua organisaation hallinnasta, ja se toimii myös yhden koneen tai oman palvelimen ympäristössä.
-- **Osaaminen ja ylläpito.** Omaa tekoälyympäristöä rakentavat organisaatiot törmäävät osaamisen puutteeseen [11], ja audit-lokien sekä malliajautuman seuranta on vaikeampaa, kun päättely tapahtuu kokonaan offline-tilassa [12].
-- **Avoimet mallit eivät ole kaikissa tehtävissä yhtä hyviä.** Ero parhaisiin suljettuihin malleihin on pienentynyt mutta kasvanut uudelleen vuoden 2024 jälkeen [8][9].
-
-**Yhteenveto.** Lähteiden perusteella paikallinen tekoäly ei ole tulevaisuus kaikessa vaan siellä, missä data on arkaluonteista, verkkoyhteys rajallinen, vasteajan pitää olla lyhyt tai kustannusten pitää olla ennustettavia. Todennäköisin lopputulos on hybridimalli, jossa arkaluonteinen työ ajetaan omassa hallinnassa ja muu työ pilvessä. Tämä on tämän projektin tulkinta lähteistä.
+Seuraavaksi katsotaan, miten tämä toteutetaan käytännössä.
 
 ---
 
@@ -419,44 +394,38 @@ FastAPI tarjoaa interaktiivisen API-dokumentaation osoitteessa `/docs` portissa 
 
 Verkkosivut tarkistettu 27.11.2026. Viitenumerot ovat tekstissä esiintymisjärjestyksessä.
 
-[1] **Fortune — Samsung kieltää ChatGPT:n käytön työssä lähdekoodivuodon jälkeen (2.5.2023)**  
-   https://fortune.com/2023/05/02/samsung-bans-employee-use-chatgpt-data-leak/
+[1] **Fortune — Samsung kieltää ChatGPT:n käytön työssä lähdekoodivuodon jälkeen (2.5.2023)**
+https://fortune.com/2023/05/02/samsung-bans-employee-use-chatgpt-data-leak/
 
-[2] **Cisco Newsroom — Cisco 2024 Data Privacy Benchmark Study: yli joka neljäs organisaatio kielsi generatiivisen tekoälyn (25.1.2024)**  
-   https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2024/m01/organizations-ban-use-of-generative-ai-over-data-privacy-security-cisco-study.html
+[2] **Cisco Newsroom — Cisco 2024 Data Privacy Benchmark Study (25.1.2024)**
+https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2024/m01/organizations-ban-use-of-generative-ai-over-data-privacy-security-cisco-study.html
 
-[3] **Euroopan tietosuojaneuvosto (EDPB) — lausunto tekoälymalleista ja GDPR:stä (18.12.2024)**  
-   https://www.edpb.europa.eu/news/edpb-opinion-on-ai-models-gdpr-principles-support-responsible-ai_en
+[3] **Euroopan tietosuojaneuvosto (EDPB) — lausunto tekoälymalleista ja GDPR:stä (18.12.2024)**
+https://www.edpb.europa.eu/news/edpb-opinion-on-ai-models-gdpr-principles-support-responsible-ai_en
 
-[4] **MTV Uutiset — Tekoälytietokoneet yleistyvät, selvitä tietosuoja-asetukset ennen käyttöä**  
-   https://www.mtvuutiset.fi/artikkeli/tekoalytietokoneet-yleistyvat-kovaa-vauhtia-selvita-nama-tietosuoja-asetukset-ennen-kayttoa/9210982
+[4] **MTV Uutiset — Tekoälytietokoneet yleistyvät, selvitä tietosuoja-asetukset ennen käyttöä**
+https://www.mtvuutiset.fi/artikkeli/tekoalytietokoneet-yleistyvat-kovaa-vauhtia-selvita-nama-tietosuoja-asetukset-ennen-kayttoa/9210982
 
-[5] **CGI Suomi — Julkisen sektorin tekoälystrategia: onko pilvi ainoa vaihtoehto? (20.3.2025)**  
-   https://www.cgi.com/fi/fi/blogi/julkisen-sektorin-tekoalystrategia-onko-pilvi-ainoa-vaihtoehto
+[5] **CGI Suomi — Julkisen sektorin tekoälystrategia: onko pilvi ainoa vaihtoehto? (20.3.2025)**
+https://www.cgi.com/fi/fi/blogi/julkisen-sektorin-tekoalystrategia-onko-pilvi-ainoa-vaihtoehto
 
-[6] **Gartner — Gartner Predicts by 2027, Organizations Will Use Small, Task-Specific AI Models Three Times More Than General-Purpose LLMs (9.4.2025)**  
-   https://www.gartner.com/en/newsroom/press-releases/2025-04-09-gartner-predicts-by-2027-organizations-will-use-small-task-specific-ai-models-three-times-more-than-general-purpose-large-language-models
+[6] **Gartner — Gartner Predicts by 2027, Organizations Will Use Small, Task-Specific AI Models Three Times More Than General-Purpose LLMs (9.4.2025)**
+https://www.gartner.com/en/newsroom/press-releases/2025-04-09-gartner-predicts-by-2027-organizations-will-use-small-task-specific-models-three-times-more-than-general-purpose-large-language-models
 
 [7] **NVIDIA Research — Small Language Models are the Future of Agentic AI (arXiv:2506.02153, kesäkuu 2025)**  
-   https://arxiv.org/abs/2506.02153
+https://arxiv.org/abs/2506.02153
 
-[8] **Stanford HAI — AI Index Report 2025, Technical Performance (open-weight-mallien kuroutuminen)**  
-   https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance
+[8] **Stanford HAI — AI Index Report 2025, Technical Performance**
+https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance
 
-[9] **HPCwire / AIwire — What Stanford's HAI Report Says About AI in Science (15.4.2026)**  
-   https://www.hpcwire.com/aiwire/2026/04/15/what-stanfords-hai-report-says-about-ai-in-science/
+[10] **Broadcom — Private Cloud Outlook 2026 (9.6.2026)**
+https://news.broadcom.com/releases/broadcom-private-cloud-outlook-2026
 
-[10] **Broadcom — Private Cloud Outlook 2026: AI Tipping Point as Production Inference Shifts to Private Cloud (9.6.2026)**  
-   https://news.broadcom.com/releases/broadcom-private-cloud-outlook-2026
+[11] **New Civil Engineer — Enterprises favour on-premises AI as sovereignty and compliance concerns grow (23.11.2026)**
+https://www.newcivilengineer.com/latest/enterprises-favour-on-premises-ai-as-sovereignty-and-compliance-concerns-grow-23-11-2026/
 
-[11] **New Civil Engineer — Enterprises favour on-premises AI as sovereignty and compliance concerns grow (Schneider Electric / Omdia, 23.11.2026)**  
-   https://www.newcivilengineer.com/latest/enterprises-favour-on-premises-ai-as-sovereignty-and-compliance-concerns-grow-23-11-2026/
-
-[12] **InfoWorld — Google brings local AI agents to laptops with Gemma 4 12B (4.6.2026)**  
-   https://www.infoworld.com/article/4181175/google-brings-local-ai-agents-to-laptops-with-gemma-4-12b.html
-
-[13] **Nous Research — Hermes Agent, lähdekoodi ja projektin yleiskuvaus**  
-   https://github.com/NousResearch/hermes-agent
+[12] **InfoWorld — Google brings local AI agents to laptops with Gemma 4 12B (4.6.2026)**
+https://www.infoworld.com/article/4181175/google-brings-local-ai-agents-to-laptops-with-gemma-4-12b.html
 
 ---
 
