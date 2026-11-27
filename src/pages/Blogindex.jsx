@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { projects } from "../data/projectsData";
 import { useLanguage } from "../context/LanguageContext";
 import { fetchStatsForSlugs } from "../utils/postStats";
+import SortDropdown from "../components/SortDropdown";
 
 // Pidä sama kuin ProjectDetail.jsx:n PROJECT_ROUTE_BASE ja reititys
 const BLOG_ROUTE_BASE = "/blog";
@@ -16,6 +17,10 @@ const T = {
     intro:
       "Kirjoituksia projekteistani, oppimistani asioista ja niiden takana olevista ratkaisuista.",
     all: "Kaikki",
+    sortLabel: "Järjestä:",
+    sortNewest: "Uusimmat",
+    sortMostViewed: "Katsotuimmat",
+    sortMostLiked: "Tykätyimmät",
     empty: "Ei kirjoituksia tällä rajauksella.",
     posts: "kirjoitusta",
     viewsLabel: "katselukertaa",
@@ -27,6 +32,10 @@ const T = {
     intro:
       "Writing about my projects, what I have learned and the decisions behind them.",
     all: "All",
+    sortLabel: "Sort by:",
+    sortNewest: "Newest",
+    sortMostViewed: "Most viewed",
+    sortMostLiked: "Most liked",
     empty: "No posts match this filter.",
     posts: "posts",
     viewsLabel: "views",
@@ -58,6 +67,7 @@ export default function BlogIndex() {
   const isFi = lang === "fi";
   const t = isFi ? T.fi : T.en;
   const [activeTag, setActiveTag] = useState(null);
+  const [sortBy, setSortBy] = useState("newest"); // "newest" | "views" | "likes"
   const [statsBySlug, setStatsBySlug] = useState({});
 
   const formatDate = (iso) =>
@@ -71,8 +81,8 @@ export default function BlogIndex() {
       : null;
 
   // Näytetään vain projektit, joille on kirjoitettu artikkeli (hasArticle).
-  // Uusin ensin. Jos päivämäärä puuttuu, projektia pidetään uusimpana,
-  // kunnes publishedAt on lisätty.
+  // Perusjärjestys: uusin ensin. Jos päivämäärä puuttuu, projektia pidetään
+  // uusimpana, kunnes publishedAt on lisätty.
   const posts = useMemo(
     () =>
       projects
@@ -117,9 +127,35 @@ export default function BlogIndex() {
       .map(([tag]) => tag);
   }, [posts]);
 
-  const visible = activeTag
-    ? posts.filter((p) => p.tags?.includes(activeTag))
-    : posts;
+  // Tagirajaus + valittu lajittelu (uusimmat / katsotuimmat / tykätyimmät).
+  // Tasatilanteessa säilytetään oletusjärjestys (uusin ensin).
+  const visible = useMemo(() => {
+    const filtered = activeTag
+      ? posts.filter((p) => p.tags?.includes(activeTag))
+      : posts;
+
+    if (sortBy === "newest") return filtered;
+
+    return filtered
+      .map((p, idx) => ({ p, idx }))
+      .sort((a, b) => {
+        const sa = statsBySlug[a.p.slug] ?? {};
+        const sb = statsBySlug[b.p.slug] ?? {};
+        const va = sortBy === "views" ? (sa.views ?? 0) : (sa.likes ?? 0);
+        const vb = sortBy === "views" ? (sb.views ?? 0) : (sb.likes ?? 0);
+        return vb - va || a.idx - b.idx;
+      })
+      .map(({ p }) => p);
+  }, [posts, activeTag, sortBy, statsBySlug]);
+
+  const sortOptions = useMemo(
+    () => [
+      { id: "newest", label: t.sortNewest },
+      { id: "views", label: t.sortMostViewed },
+      { id: "likes", label: t.sortMostLiked },
+    ],
+    [t.sortNewest, t.sortMostViewed, t.sortMostLiked],
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -154,29 +190,38 @@ export default function BlogIndex() {
             <p className="max-w-2xl text-lg text-slate-600">{t.intro}</p>
           </header>
 
-          {/* Tagisuodatin */}
-          {topTags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-8" role="group">
-              {[null, ...topTags].map((tag) => {
-                const active = tag === activeTag;
-                return (
-                  <button
-                    key={tag ?? "all"}
-                    type="button"
-                    onClick={() => setActiveTag(tag)}
-                    aria-pressed={active}
-                    className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
-                      active
-                        ? "bg-slate-900 text-white border-slate-900"
-                        : "bg-blue-100 text-slate-800 border-blue-200 hover:bg-blue-200"
-                    }`}
-                  >
-                    {tag ?? t.all}
-                  </button>
-                );
-              })}
-            </div>
-          )}
+          {/* Tagisuodatin ja lajittelu */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-8">
+            {topTags.length > 0 && (
+              <div className="flex flex-wrap gap-2" role="group">
+                {[null, ...topTags].map((tag) => {
+                  const active = tag === activeTag;
+                  return (
+                    <button
+                      key={tag ?? "all"}
+                      type="button"
+                      onClick={() => setActiveTag(tag)}
+                      aria-pressed={active}
+                      className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                        active
+                          ? "bg-slate-900 text-white border-slate-900"
+                          : "bg-blue-100 text-slate-800 border-blue-200 hover:bg-blue-200"
+                      }`}
+                    >
+                      {tag ?? t.all}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            <SortDropdown
+              label={t.sortLabel}
+              value={sortBy}
+              options={sortOptions}
+              onChange={setSortBy}
+            />
+          </div>
 
           {visible.length === 0 ? (
             <p className="py-16 text-center text-slate-500">{t.empty}</p>
