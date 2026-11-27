@@ -371,7 +371,7 @@ export const projectsData = [
   },
   {
     slug: "flappybird-night-version",
-    hasArticle: true,
+    hasArticle: false,
     publishedAt: "2022-03-27",
     updatedAt: "2022-03-27",
     tags: ["Unity", "C#", "C++", "WebGL"],
@@ -389,7 +389,7 @@ export const projectsData = [
   },
   {
     slug: "rock-paper-scissors-csharp",
-    hasArticle: true,
+    hasArticle: false,
     publishedAt: "2023-01-01",
     updatedAt: "2023-01-01",
     tags: ["C#", ".NET", "Game Development"],
@@ -406,7 +406,7 @@ export const projectsData = [
   },
   {
     slug: "referral-website-concept",
-    hasArticle: true,
+    hasArticle: false,
     publishedAt: "2022-02-25",
     updatedAt: "2022-02-25",
     tags: ["HTML5", "CSS3", "Responsive Design"],
@@ -424,7 +424,7 @@ export const projectsData = [
   },
   {
     slug: "banking-app-one-pager",
-    hasArticle: true,
+    hasArticle: false,
     publishedAt: "2023-04-06",
     updatedAt: "2023-04-06",
     tags: ["React", "Vite", "Tailwind CSS", "Tutorial"],
@@ -442,7 +442,7 @@ export const projectsData = [
   },
   {
     slug: "tesla-website-clone",
-    hasArticle: true,
+    hasArticle: false,
     publishedAt: "2024-07-01",
     updatedAt: "2024-07-01",
     tags: ["React", "Tailwind CSS", "Tutorial"],
@@ -460,7 +460,7 @@ export const projectsData = [
   },
   {
     slug: "budget-calculator-js",
-    hasArticle: true,
+    hasArticle: false,
     publishedAt: "2023-11-20",
     updatedAt: "2023-11-20",
     tags: ["HTML5", "CSS3", "JavaScript", "DOM Manipulation"],
@@ -478,7 +478,7 @@ export const projectsData = [
   },
   {
     slug: "crypto-price-checker",
-    hasArticle: true,
+    hasArticle: false,
     publishedAt: "2023-11-15",
     updatedAt: "2023-11-15",
     tags: ["React", "Tailwind CSS", "REST API", "LocalStorage"],
@@ -496,7 +496,7 @@ export const projectsData = [
   },
   {
     slug: "cs2-edpi-calculator-csharp",
-    hasArticle: true,
+    hasArticle: false,
     publishedAt: "2024-10-10",
     updatedAt: "2024-10-10",
     tags: ["C#", "WinForms", ".NET"],
