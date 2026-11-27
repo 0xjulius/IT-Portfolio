@@ -79,7 +79,7 @@ export const projectsData = [
     descriptionFi:
       "Täysin paikallisesti toimiva tekoälyratkaisu yrityksille, joka varmistaa datan yksityisyyden ja säädösten noudattamisen ilman ulkoisia rajapintoja.",
     github: "https://github.com/0xjulius/Local-RAG-Engine",
-    live: "",
+    live: "https://rag-machine-demo-frontend-two.vercel.app/",
     badgeEn: "NEW!",
     badgeFi: "UUSI!",
   },
